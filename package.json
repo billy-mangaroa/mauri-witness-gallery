@@ -1,0 +1,10 @@
+
+{
+  "name": "mauri-witness-gallery",
+  "version": "1.0.0",
+  "description": "Mangaroa Impact Reporting Gallery",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
