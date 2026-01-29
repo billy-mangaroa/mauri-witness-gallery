@@ -13,26 +13,32 @@ interface PredatorMeta {
 const PREDATOR_INFO: Record<string, PredatorMeta> = {
   'Possum': {
     title: 'Australian Brush-tailed Possum',
-    image: 'https://images.unsplash.com/photo-1611002598335-e51c863a99c9?q=80&w=800&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1590691566903-692bf5ca278f?q=80&w=800&auto=format&fit=crop',
     destructiveReason: 'Possums are a major threat to New Zealand forests, stripping the canopy and preying on native bird eggs and chicks. They compete directly with native species for food.',
     methods: 'Live capture traps, leg-hold traps, and targeted baiting programs.'
   },
-  'Rat/Stoat': {
-    title: 'Rats & Mustelids (Stoats, Weasels)',
-    image: 'https://images.unsplash.com/photo-1590634208008-019623ec2838?q=80&w=800&auto=format&fit=crop',
-    destructiveReason: 'Highly efficient killers. Stoats are responsible for the decline of many native bird populations, including Kiwi. Rats consume seeds, fruits, and small invertebrates.',
-    methods: 'A24 self-resetting traps, DOC200 kill traps, and community-led trapping lines.'
+  'Stoat': {
+    title: 'Stoats & Mustelids',
+    image: 'https://images.unsplash.com/photo-1615551043360-33de8b5f410c?q=80&w=800&auto=format&fit=crop',
+    destructiveReason: 'Stoats are the primary predators of many of New Zealand\'s most vulnerable bird species, including kiwi chicks. They are highly efficient hunters.',
+    methods: 'DOC200 series traps, community-led trapping lines.'
+  },
+  'Rat': {
+    title: 'Invasive Rats',
+    image: 'https://images.unsplash.com/photo-1588661704283-8a3068710787?q=80&w=800&auto=format&fit=crop',
+    destructiveReason: 'Rats consume seeds, fruits, and small invertebrates, disrupting the food chain. They also prey on the eggs and chicks of native birds.',
+    methods: 'A24 self-resetting traps and targeted baiting.'
   },
   'Large Browser': {
     title: 'Large Browsers (Deer, Goats, Pigs)',
-    image: 'https://images.unsplash.com/photo-1549468057-5b7fa1a41d7a?q=80&w=800&auto=format&fit=crop',
-    destructiveReason: 'These animals consume the forest understory, preventing the regeneration of native trees and destroying the habitat for ground-dwelling species.',
-    methods: 'Professional ground hunting, community culls, and exclusion fencing.'
+    image: 'https://images.unsplash.com/photo-1484406566174-9da000fda645?q=80&w=800&auto=format&fit=crop',
+    destructiveReason: 'These animals consume the forest understory, preventing the regeneration of native trees and destroying habitat for ground-dwelling species.',
+    methods: 'Professional ground hunting and community culls.'
   },
   'Other': {
     title: 'Invasive Small Mammals',
-    image: 'https://images.unsplash.com/photo-1591976031336-930438ec3011?q=80&w=800&auto=format&fit=crop',
-    destructiveReason: 'Hedgehogs, cats, and rabbits impact the ecosystem by preying on native insects and disturbing the soil balance.',
+    image: 'https://images.unsplash.com/photo-1510253687912-07622657f6a7?q=80&w=800&auto=format&fit=crop',
+    destructiveReason: 'Hedgehogs, feral cats, and rabbits impact the ecosystem by preying on native insects and disturbing the soil balance.',
     methods: 'Targeted trapping and exclusion management.'
   }
 };
@@ -49,7 +55,8 @@ const PredatorFree: React.FC = () => {
   }, [allRecords, minYear, maxYear]);
 
   // Derived Stats
-  const totalCount = filteredRecords.reduce((sum, r) => sum + r.count, 0);
+  const totalCount = useMemo(() => filteredRecords.reduce((sum, r) => sum + r.count, 0), [filteredRecords]);
+  
   const speciesStats = useMemo(() => {
     const map: Record<string, number> = {};
     filteredRecords.forEach(r => {
@@ -58,16 +65,29 @@ const PredatorFree: React.FC = () => {
     return Object.entries(map).sort((a, b) => b[1] - a[1]);
   }, [filteredRecords]);
 
-  const monthlyTrend = useMemo(() => {
-    const map: Record<string, number> = {};
+  const seasonalTrend = useMemo(() => {
+    const seasons = {
+      'Summer': { count: 0, color: '#E9C46A' }, // Dec, Jan, Feb
+      'Autumn': { count: 0, color: '#F4A261' }, // Mar, Apr, May
+      'Winter': { count: 0, color: '#264653' }, // Jun, Jul, Aug
+      'Spring': { count: 0, color: '#2A9D8F' }  // Sep, Oct, Nov
+    };
+
     filteredRecords.forEach(r => {
-      const key = `${r.year}-${String(r.month + 1).padStart(2, '0')}`;
-      map[key] = (map[key] || 0) + r.count;
+      // JS months: 0-11. 11 (Dec), 0 (Jan), 1 (Feb)
+      if ([11, 0, 1].includes(r.month)) seasons['Summer'].count += r.count;
+      else if ([2, 3, 4].includes(r.month)) seasons['Autumn'].count += r.count;
+      else if ([5, 6, 7].includes(r.month)) seasons['Winter'].count += r.count;
+      else if ([8, 9, 10].includes(r.month)) seasons['Spring'].count += r.count;
     });
-    return Object.entries(map).sort((a, b) => a[0].localeCompare(b[0]));
+
+    return Object.entries(seasons);
   }, [filteredRecords]);
 
-  const maxMonthly = Math.max(...monthlyTrend.map(t => t[1]), 1);
+  const peakSeason = useMemo(() => {
+    const sorted = [...seasonalTrend].sort((a, b) => b[1].count - a[1].count);
+    return sorted[0]?.[0] || 'N/A';
+  }, [seasonalTrend]);
 
   const resetFilters = () => {
     setMinYear(2022);
@@ -153,7 +173,7 @@ const PredatorFree: React.FC = () => {
           </div>
           <div className="space-y-2">
             <h4 className="text-[9px] uppercase tracking-widest opacity-30 font-bold block">Peak Pressure Period</h4>
-            <span className="font-serif text-4xl italic">Autumn</span>
+            <span className="font-serif text-4xl italic">{peakSeason}</span>
           </div>
           <div className="space-y-2">
             <h4 className="text-[9px] uppercase tracking-widest opacity-30 font-bold block">Dominant Species</h4>
@@ -169,34 +189,48 @@ const PredatorFree: React.FC = () => {
       {/* Main Charts Layer */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
         
-        {/* Time Series Chart */}
-        <div className="space-y-8">
+        {/* Seasonal Trends */}
+        <div className="space-y-10">
           <div className="flex items-center justify-between">
-            <h3 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Predator Removal Trend</h3>
-            <span className="text-[8px] uppercase tracking-widest font-bold opacity-20 italic">Interactive Monthly Scale</span>
+            <h3 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Seasonal Capture Pulse</h3>
+            <span className="text-[8px] uppercase tracking-widest font-bold opacity-20 italic">NZ Season Cycle</span>
           </div>
-          <div className="h-64 flex items-end gap-1.5 border-b border-[#E5E1DD] pb-4 overflow-x-auto custom-scrollbar group">
-            {monthlyTrend.map(([date, count]) => (
-              <div key={date} className="flex-1 min-w-[12px] group relative h-full flex flex-col justify-end">
-                <div 
-                  className="w-full bg-[#2D4F2D]/20 group-hover:bg-[#2D4F2D]/10 hover:!bg-[#2D4F2D] transition-all rounded-t-sm"
-                  style={{ height: `${(count / maxMonthly) * 100}%` }}
-                />
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white border border-[#E5E1DD] px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap shadow-2xl text-[10px] font-bold">
-                  {date}: {count} removals
+          <div className="grid grid-cols-1 gap-6">
+            {seasonalTrend.map(([season, data]) => (
+              <div key={season} className="space-y-3">
+                <div className="flex justify-between items-end">
+                  <div className="space-y-1">
+                    <span className="text-[10px] uppercase tracking-widest font-black opacity-40">{season}</span>
+                    <p className="text-[8px] opacity-20 font-bold">
+                      {season === 'Summer' && 'Dec - Feb'}
+                      {season === 'Autumn' && 'Mar - May'}
+                      {season === 'Winter' && 'Jun - Aug'}
+                      {season === 'Spring' && 'Sep - Nov'}
+                    </p>
+                  </div>
+                  <span className="font-serif text-3xl tracking-tighter">{data.count}</span>
+                </div>
+                <div className="h-2 bg-[#E5E1DD]/30 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full transition-all duration-1000 ease-out"
+                    style={{ 
+                      width: `${totalCount > 0 ? (data.count / totalCount) * 100 : 0}%`,
+                      backgroundColor: data.color
+                    }}
+                  />
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-[9px] text-[#A5A19D] font-medium leading-relaxed italic">
-            *Slide the timeline above to see how our efforts have shifted the pressure in specific catchments over years.
+          <p className="text-[9px] text-[#A5A19D] font-medium leading-relaxed italic pt-4">
+            *Seasonal variations in capture rates reflect both animal behavior cycles and the intensity of seasonal culling operations.
           </p>
         </div>
 
         {/* Species Distribution Chart with Lightbox Hover */}
         <div className="space-y-8">
           <div className="flex items-center justify-between">
-            <h3 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Species Distribution</h3>
+            <h3 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Species Group Breakdown</h3>
             <span className="text-[8px] uppercase tracking-widest font-bold opacity-20 italic">Hover for Impact Details</span>
           </div>
           <div className="space-y-6 relative">
@@ -214,7 +248,7 @@ const PredatorFree: React.FC = () => {
                 <div className="h-4 bg-[#E5E1DD]/30 rounded-sm overflow-hidden border border-[#E5E1DD]">
                   <div 
                     className="h-full bg-[#2D4F2D] transition-all duration-1000 group-hover/bar:opacity-80"
-                    style={{ width: `${(count / totalCount) * 100}%` }}
+                    style={{ width: `${totalCount > 0 ? (count / totalCount) * 100 : 0}%` }}
                   />
                 </div>
               </div>
@@ -254,7 +288,7 @@ const PredatorFree: React.FC = () => {
       {/* Insight Strip */}
       <div className="border-l-4 border-[#2D4F2D] pl-8 py-8 bg-[#FDFCFB] rounded-r-2xl shadow-sm">
          <p className="font-serif text-2xl italic text-[#1A1A1A] leading-relaxed">
-            "By focusing our trapping efforts along the ridge lines and within the regenerating corridors, we are seeing a 15% year-on-year increase in native bird sightings. The forest is beginning to speak again."
+            "By focusing our trapping efforts along the ridge lines and within the regenerating corridors, we are seeing a visible return of the native understory. The forest is beginning to speak again."
          </p>
       </div>
 
