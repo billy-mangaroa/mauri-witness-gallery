@@ -20,31 +20,31 @@ interface SeasonMeta {
 const PREDATOR_INFO: Record<string, PredatorMeta> = {
   'Possum': {
     title: 'Australian Brush-tailed Possum',
-    image: 'https://images.unsplash.com/photo-1590691566903-692bf5ca278f?q=80&w=800&auto=format&fit=crop',
+    image: '/assets/pests/possum.png',
     destructiveReason: 'Possums are a major threat to New Zealand forests, stripping the canopy and preying on native bird eggs and chicks. They compete directly with native species for food.',
     methods: 'Live capture traps, leg-hold traps, and targeted baiting programs.'
   },
   'Stoat': {
     title: 'Stoats & Mustelids',
-    image: 'https://images.unsplash.com/photo-1615551043360-33de8b5f410c?q=80&w=800&auto=format&fit=crop',
+    image: '/assets/pests/stoat.png',
     destructiveReason: 'Stoats are the primary predators of many of New Zealand\'s most vulnerable bird species, including kiwi chicks. They are highly efficient hunters.',
     methods: 'DOC200 series traps, community-led trapping lines.'
   },
   'Rat': {
     title: 'Invasive Rats',
-    image: 'https://images.unsplash.com/photo-1588661704283-8a3068710787?q=80&w=800&auto=format&fit=crop',
+    image: '/assets/pests/stoat.png',
     destructiveReason: 'Rats consume seeds, fruits, and small invertebrates, disrupting the food chain. They also prey on the eggs and chicks of native birds.',
     methods: 'A24 self-resetting traps and targeted baiting.'
   },
   'Large Browser': {
     title: 'Large Browsers (Deer, Goats, Pigs)',
-    image: 'https://images.unsplash.com/photo-1484406566174-9da000fda645?q=80&w=800&auto=format&fit=crop',
+    image: '/assets/pests/deer.png',
     destructiveReason: 'These animals consume the forest understory, preventing the regeneration of native trees and destroying habitat for ground-dwelling species.',
     methods: 'Professional ground hunting and community culls.'
   },
   'Other': {
     title: 'Invasive Small Mammals',
-    image: 'https://images.unsplash.com/photo-1510253687912-07622657f6a7?q=80&w=800&auto=format&fit=crop',
+    image: '/assets/pests/hedgehog.png',
     destructiveReason: 'Hedgehogs, feral cats, and rabbits impact the ecosystem by preying on native insects and disturbing the soil balance.',
     methods: 'Targeted trapping and exclusion management.'
   }
