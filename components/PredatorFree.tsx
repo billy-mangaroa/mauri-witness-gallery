@@ -256,27 +256,39 @@ const PredatorFree: React.FC = () => {
 
             {/* Predator Lightbox/Tooltip */}
             {hoveredSpecies && PREDATOR_INFO[hoveredSpecies] && (
-              <div className="absolute top-0 right-0 w-80 bg-white shadow-2xl border border-[#E5E1DD] rounded-[20px] overflow-hidden z-50 animate-in fade-in slide-in-from-right-4 duration-300 pointer-events-none">
-                <div className="aspect-video bg-gray-100">
+              <div className="absolute top-0 right-0 w-80 bg-white/95 backdrop-blur-md shadow-2xl border border-[#E5E1DD] rounded-[24px] overflow-hidden z-50 animate-in fade-in slide-in-from-right-4 duration-300 pointer-events-none">
+                <div className="relative aspect-video bg-black/10 overflow-hidden">
                   <img 
                     src={PREDATOR_INFO[hoveredSpecies].image} 
                     alt={hoveredSpecies} 
-                    className="w-full h-full object-cover grayscale-[20%]"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out scale-105"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent" />
+                  <div className="absolute bottom-3 left-4 right-4 text-white">
+                    <p className="text-[9px] uppercase tracking-[0.25em] font-bold opacity-70 mb-1">
+                      {hoveredSpecies} group
+                    </p>
+                    <p className="font-serif text-lg leading-tight drop-shadow">
+                      {PREDATOR_INFO[hoveredSpecies].title}
+                    </p>
+                  </div>
                 </div>
                 <div className="p-6 space-y-4">
-                  <div className="space-y-1">
-                    <h4 className="text-[11px] uppercase tracking-widest font-black text-[#2D4F2D]">{PREDATOR_INFO[hoveredSpecies].title}</h4>
-                    <span className="text-[8px] uppercase tracking-widest font-bold opacity-30">Impact Profile</span>
-                  </div>
-                  <div className="space-y-3">
-                    <p className="text-[10px] leading-relaxed text-[#666] font-serif italic">
+                  <div className="space-y-2">
+                    <span className="text-[9px] uppercase tracking-[0.3em] font-black opacity-40 block">
+                      Impact on Mauri
+                    </span>
+                    <p className="text-xs leading-relaxed text-[#444] font-serif">
                       {PREDATOR_INFO[hoveredSpecies].destructiveReason}
                     </p>
-                    <div className="pt-3 border-t border-[#F1F1F1]">
-                      <span className="text-[8px] uppercase tracking-widest font-black opacity-30 block mb-1">Control Methods</span>
-                      <p className="text-[10px] leading-relaxed text-[#2D4F2D] font-bold">{PREDATOR_INFO[hoveredSpecies].methods}</p>
-                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-[#F1F1F1] space-y-2">
+                    <span className="text-[9px] uppercase tracking-[0.3em] font-black opacity-40 block">
+                      Field Response
+                    </span>
+                    <p className="text-xs leading-relaxed text-[#1F3B1F] font-semibold">
+                      {PREDATOR_INFO[hoveredSpecies].methods}
+                    </p>
                   </div>
                 </div>
               </div>
