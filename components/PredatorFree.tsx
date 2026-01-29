@@ -10,6 +10,13 @@ interface PredatorMeta {
   methods: string;
 }
 
+interface SeasonMeta {
+  count: number;
+  color: string;
+  label: string;
+  narrative: string;
+}
+
 const PREDATOR_INFO: Record<string, PredatorMeta> = {
   'Possum': {
     title: 'Australian Brush-tailed Possum',
@@ -66,11 +73,31 @@ const PredatorFree: React.FC = () => {
   }, [filteredRecords]);
 
   const seasonalTrend = useMemo(() => {
-    const seasons = {
-      'Summer': { count: 0, color: '#E9C46A' }, // Dec, Jan, Feb
-      'Autumn': { count: 0, color: '#F4A261' }, // Mar, Apr, May
-      'Winter': { count: 0, color: '#264653' }, // Jun, Jul, Aug
-      'Spring': { count: 0, color: '#2A9D8F' }  // Sep, Oct, Nov
+    const seasons: Record<string, SeasonMeta> = {
+      'Summer': { 
+        count: 0, 
+        color: '#E9C46A',
+        label: 'Dec – Feb',
+        narrative: 'Warm nights, high movement. Possums, rats and hedgehogs are highly active and quickly find unprotected food sources.'
+      },
+      'Autumn': { 
+        count: 0, 
+        color: '#F4A261',
+        label: 'Mar – May',
+        narrative: 'Autumn is when we lean into landscape-scale culls, targeting browsers before winter browsing pressure bites hardest.'
+      },
+      'Winter': { 
+        count: 0, 
+        color: '#264653',
+        label: 'Jun – Aug',
+        narrative: 'Cold months compress movement along warm gullies and ridgelines, making traps and thermal-assisted hunts more efficient.'
+      },
+      'Spring': { 
+        count: 0, 
+        color: '#2A9D8F',
+        label: 'Sep – Nov',
+        narrative: 'Nesting season. Reducing mustelids and rats now gives native chicks their best chance to make it through their first weeks.'
+      }
     };
 
     filteredRecords.forEach(r => {
@@ -199,18 +226,23 @@ const PredatorFree: React.FC = () => {
             {seasonalTrend.map(([season, data]) => (
               <div key={season} className="space-y-3">
                 <div className="flex justify-between items-end">
-                  <div className="space-y-1">
-                    <span className="text-[10px] uppercase tracking-widest font-black opacity-40">{season}</span>
-                    <p className="text-[8px] opacity-20 font-bold">
-                      {season === 'Summer' && 'Dec - Feb'}
-                      {season === 'Autumn' && 'Mar - May'}
-                      {season === 'Winter' && 'Jun - Aug'}
-                      {season === 'Spring' && 'Sep - Nov'}
+                  <div className="space-y-1 max-w-xs">
+                    <span className="text-[10px] uppercase tracking-widest font-black opacity-60">{season}</span>
+                    <p className="text-[9px] font-medium text-[#6B6762] leading-snug">
+                      {data.narrative}
+                    </p>
+                    <p className="text-[8px] uppercase tracking-[0.25em] font-bold opacity-30">
+                      {data.label}
                     </p>
                   </div>
-                  <span className="font-serif text-3xl tracking-tighter">{data.count}</span>
+                  <div className="text-right">
+                    <span className="block text-[9px] uppercase tracking-[0.25em] font-bold opacity-40 mb-1">
+                      Captures in window
+                    </span>
+                    <span className="font-serif text-3xl tracking-tighter">{data.count}</span>
+                  </div>
                 </div>
-                <div className="h-2 bg-[#E5E1DD]/30 rounded-full overflow-hidden">
+                <div className="h-2 bg-[#E5E1DD]/40 rounded-full overflow-hidden">
                   <div 
                     className="h-full transition-all duration-1000 ease-out"
                     style={{ 
@@ -223,7 +255,7 @@ const PredatorFree: React.FC = () => {
             ))}
           </div>
           <p className="text-[9px] text-[#A5A19D] font-medium leading-relaxed italic pt-4">
-            *Seasonal variations in capture rates reflect both animal behavior cycles and the intensity of seasonal culling operations.
+            *Each bar reads as a season-long pulse: the volume of captures in that window, and how our field strategy shifts with the climate and breeding cycles.
           </p>
         </div>
 
