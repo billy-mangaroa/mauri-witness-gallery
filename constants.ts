@@ -67,31 +67,31 @@ export const DOMAIN_NARRATIVES: Record<DomainType, DomainNarrative> = {
 
 export const DOMAIN_METRICS: Record<DomainType, Metric[]> = {
   Earth: [
-    { id: 'e1', domain: 'Earth', label: 'Soil Organic Carbon', result: '6.1%', trend: 'up' },
-    { id: 'e2', domain: 'Earth', label: 'Pests Removed (Total)', result: '817', trend: 'up' },
-    { id: 'e3', domain: 'Earth', label: 'Native Species Observed', result: '42', trend: 'up' },
-    { id: 'e4', domain: 'Earth', label: 'Wetland Restored', result: '1.4 ha', trend: 'up' }
+    { id: 'e1', domain: 'Earth', label: 'Soil Carbon', description: 'Permanent plots, 0–10cm horizon', result: '6.1%', trend: 'up' },
+    { id: 'e2', domain: 'Earth', label: 'Indicator Species', description: '5 forest birds recorded consistently since baseline', result: '42', trend: 'up' },
+    { id: 'e3', domain: 'Earth', label: 'Wetland Restored', description: 'Hectares restored since baseline', result: '1.4 ha', trend: 'up' },
+    { id: 'e4', domain: 'Earth', label: 'Predator Pressure', description: 'Active traps + annual removals', result: '817', trend: 'up' }
   ],
   People: [
-    { id: 'p1', domain: 'People', label: 'People Engaged (FY25)', result: '1,420', trend: 'up' },
-    { id: 'p2', domain: 'People', label: 'Median Hours / Person', result: '6.5', trend: 'up' },
-    { id: 'p3', domain: 'People', label: 'Public Events Hosted', result: '14', trend: 'up' },
-    { id: 'p4', domain: 'People', label: 'Belonging Score', result: '4.2', trend: 'up' }
+    { id: 'p1', domain: 'People', label: 'People Engaged', description: 'Unique participants FY25', result: '1,420', trend: 'up' },
+    { id: 'p2', domain: 'People', label: 'Median Hours', description: 'Average time per participant', result: '6.5', trend: 'up' },
+    { id: 'p3', domain: 'People', label: 'Public Events', description: 'Community gatherings hosted', result: '14', trend: 'up' },
+    { id: 'p4', domain: 'People', label: 'Belonging Score', description: 'Post-visit survey (1–5 scale)', result: '4.2', trend: 'up' }
   ],
   Systems: [
-    { id: 's1', domain: 'Systems', label: 'Regen Revenue %', result: '47%', trend: 'up' },
-    { id: 's2', domain: 'Systems', label: 'Cross-team Collabs', result: '7', trend: 'up' },
-    { id: 's3', domain: 'Systems', label: 'Adaptive Decisions', result: '12', trend: 'up' }
+    { id: 's1', domain: 'Systems', label: 'Regen Revenue', description: 'Income from regenerative activities', result: '47%', trend: 'up' },
+    { id: 's2', domain: 'Systems', label: 'Cross-team Collabs', description: 'Active inter-pod partnerships', result: '7', trend: 'up' },
+    { id: 's3', domain: 'Systems', label: 'Adaptive Decisions', description: 'Data-informed pivots this year', result: '12', trend: 'up' }
   ],
   Mauri: [
-    { id: 'w1', domain: 'Mauri', label: 'Seasonal Rituals Held', result: '8', trend: 'up' },
-    { id: 'w2', domain: 'Mauri', label: 'Mana Whenua Engagements', result: '5', trend: 'steady' },
-    { id: 'w3', domain: 'Mauri', label: 'Mauri Reflection Score', result: '4.4', trend: 'up' }
+    { id: 'w1', domain: 'Mauri', label: 'Seasonal Rituals', description: 'Ceremonies held on-farm', result: '8', trend: 'up' },
+    { id: 'w2', domain: 'Mauri', label: 'Mana Whenua', description: 'Engagements with tangata whenua', result: '5', trend: 'steady' },
+    { id: 'w3', domain: 'Mauri', label: 'Mauri Reflection', description: 'Team wellbeing score (1–5 scale)', result: '4.4', trend: 'up' }
   ],
   Network: [
-    { id: 'n1', domain: 'Network', label: 'Partner Orgs', result: '28', trend: 'up' },
-    { id: 'n2', domain: 'Network', label: 'Shared Projects', result: '154', trend: 'up' },
-    { id: 'n3', domain: 'Network', label: 'Network Density', result: '0.42', trend: 'up' }
+    { id: 'n1', domain: 'Network', label: 'Partner Orgs', description: 'Active collaborating organisations', result: '28', trend: 'up' },
+    { id: 'n2', domain: 'Network', label: 'Shared Projects', description: 'Joint initiatives since baseline', result: '154', trend: 'up' },
+    { id: 'n3', domain: 'Network', label: 'Network Density', description: 'Interconnection ratio (0–1)', result: '0.42', trend: 'up' }
   ]
 };
 

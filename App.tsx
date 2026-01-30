@@ -129,19 +129,27 @@ const App: React.FC = () => {
       </header>
 
       {/* Impact Snapshot Dashboard */}
-      <section className="bg-white border-y border-[#E5E1DD] py-20 px-6">
-        <div className="max-w-screen-xl mx-auto space-y-16">
-          <h2 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Impact Snapshot</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <section className="bg-[#FAFAF9] border-y border-[#E5E1DD] py-20 px-6">
+        <div className="max-w-screen-xl mx-auto space-y-12">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <h2 className="text-sm uppercase tracking-[0.2em] font-bold text-[#2D4F2D]">Impact Snapshot</h2>
+            <p className="text-xs text-[#888] max-w-md leading-relaxed">
+              Metrics measured in partnership with GroundTruth through permanent monitoring sites, repeatable seasonal surveys, and five-year verification.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             {DOMAIN_METRICS[activeDomain].map(metric => (
-              <div key={metric.id} className="group">
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="font-serif text-6xl tracking-tighter">{metric.result}</span>
-                  <span className="text-xl text-[#2D4F2D]">
+              <div key={metric.id} className="group bg-white rounded-2xl p-6 border border-[#E5E1DD]/60 hover:border-[#2D4F2D]/30 transition-colors">
+                <div className="flex items-baseline gap-2 mb-3">
+                  <span className="font-serif text-5xl tracking-tighter text-[#1A1A1A]">{metric.result}</span>
+                  <span className="text-lg text-[#2D4F2D]">
                     {metric.trend === 'up' ? '↑' : metric.trend === 'down' ? '↓' : '→'}
                   </span>
                 </div>
-                <div className="text-[10px] uppercase tracking-widest font-bold opacity-40">{metric.label}</div>
+                <div className="text-sm font-semibold text-[#333] mb-1">{metric.label}</div>
+                {metric.description && (
+                  <div className="text-xs text-[#888] leading-relaxed">{metric.description}</div>
+                )}
               </div>
             ))}
           </div>

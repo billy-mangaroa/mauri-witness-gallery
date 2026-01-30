@@ -61,6 +61,7 @@ export interface Metric {
   id: string;
   domain: DomainType;
   label: string;
+  description?: string;
   result: string;
   trend: 'up' | 'down' | 'steady';
 }
