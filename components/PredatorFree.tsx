@@ -56,6 +56,7 @@ const PredatorFree: React.FC = () => {
   const [minYear, setMinYear] = useState(2022);
   const [maxYear, setMaxYear] = useState(2025);
   const [hoveredSpecies, setHoveredSpecies] = useState<string | null>(null);
+  const [hoveredSeason, setHoveredSeason] = useState<string | null>(null);
   
   const filteredRecords = useMemo(() => {
     return allRecords.filter(r => r.year >= minYear && r.year <= maxYear);
@@ -232,46 +233,124 @@ const PredatorFree: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
         
         {/* Seasonal Trends */}
-        <div className="space-y-10">
-          <div className="flex items-center justify-between">
-            <h3 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Seasonal Capture Pulse</h3>
-            <span className="text-[8px] uppercase tracking-widest font-bold opacity-20 italic">NZ Season Cycle</span>
-          </div>
-          <div className="grid grid-cols-1 gap-6">
-            {seasonalTrend.map(([season, data]) => (
-              <div key={season} className="space-y-3">
-                <div className="flex justify-between items-end">
-                  <div className="space-y-1 max-w-xs">
-                    <span className="text-[10px] uppercase tracking-widest font-black opacity-60">{season}</span>
-                    <p className="text-[9px] font-medium text-[#6B6762] leading-snug">
-                      {data.narrative}
-                    </p>
-                    <p className="text-[8px] uppercase tracking-[0.25em] font-bold opacity-30">
-                      {data.label}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <span className="block text-[9px] uppercase tracking-[0.25em] font-bold opacity-40 mb-1">
-                      Captures in window
-                    </span>
-                    <span className="font-serif text-3xl tracking-tighter">{data.count}</span>
+        <div className="space-y-8 relative">
+          <h3 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Seasonal Capture Pulse</h3>
+          
+          <div className="grid grid-cols-2 gap-4">
+            {seasonalTrend.map(([season, data]) => {
+              const icons: Record<string, React.ReactNode> = {
+                Summer: (
+                  <svg viewBox="0 0 24 24" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="12" cy="12" r="4" />
+                    <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                  </svg>
+                ),
+                Autumn: (
+                  <svg viewBox="0 0 24 24" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M12 22V8M12 8C12 8 8 12 5 10C2 8 4 4 7 3C10 2 12 5 12 8Z" />
+                    <path d="M12 8C12 8 16 12 19 10C22 8 20 4 17 3C14 2 12 5 12 8Z" />
+                  </svg>
+                ),
+                Winter: (
+                  <svg viewBox="0 0 24 24" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
+                    <path d="M8 19v1M8 14v1M12 21v1M12 16v1M16 19v1M16 14v1" />
+                  </svg>
+                ),
+                Spring: (
+                  <svg viewBox="0 0 24 24" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M12 22v-7" />
+                    <path d="M9 19h6" />
+                    <path d="M12 15c-3.5 0-6-2.5-6-6 0-4 3-6 6-6s6 2 6 6c0 3.5-2.5 6-6 6z" />
+                    <path d="M12 9v2" />
+                  </svg>
+                )
+              };
+              
+              return (
+                <div 
+                  key={season}
+                  onMouseEnter={() => setHoveredSeason(season)}
+                  onMouseLeave={() => setHoveredSeason(null)}
+                  className={`
+                    relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300
+                    ${hoveredSeason === season 
+                      ? 'border-current shadow-lg scale-[1.02]' 
+                      : 'border-[#E5E1DD] hover:border-current/30'
+                    }
+                  `}
+                  style={{ color: data.color }}
+                >
+                  <div className="flex flex-col items-center text-center gap-3">
+                    <div className="opacity-90">
+                      {icons[season]}
+                    </div>
+                    <div>
+                      <span className="text-xs uppercase tracking-widest font-bold text-[#333]">{season}</span>
+                    </div>
+                    <div className="font-serif text-4xl tracking-tighter text-[#1A1A1A]">
+                      {data.count}
+                    </div>
                   </div>
                 </div>
-                <div className="h-2 bg-[#E5E1DD]/40 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full transition-all duration-1000 ease-out"
-                    style={{ 
-                      width: `${totalCount > 0 ? (data.count / totalCount) * 100 : 0}%`,
-                      backgroundColor: data.color
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-          <p className="text-[9px] text-[#A5A19D] font-medium leading-relaxed italic pt-4">
-            *Each bar reads as a season-long pulse: the volume of captures in that window, and how our field strategy shifts with the climate and breeding cycles.
-          </p>
+          
+          {/* Season Lightbox */}
+          {hoveredSeason && (
+            <div className="absolute top-0 left-full ml-6 w-72 bg-white/95 backdrop-blur-md shadow-2xl border border-[#E5E1DD] rounded-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-left-4 duration-300 pointer-events-none">
+              {(() => {
+                const seasonData = seasonalTrend.find(([s]) => s === hoveredSeason)?.[1];
+                if (!seasonData) return null;
+                return (
+                  <div className="p-6 space-y-4">
+                    <div 
+                      className="w-12 h-12 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: `${seasonData.color}20`, color: seasonData.color }}
+                    >
+                      {hoveredSeason === 'Summer' && (
+                        <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="4" />
+                          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                        </svg>
+                      )}
+                      {hoveredSeason === 'Autumn' && (
+                        <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M12 22V8M12 8C12 8 8 12 5 10C2 8 4 4 7 3C10 2 12 5 12 8Z" />
+                          <path d="M12 8C12 8 16 12 19 10C22 8 20 4 17 3C14 2 12 5 12 8Z" />
+                        </svg>
+                      )}
+                      {hoveredSeason === 'Winter' && (
+                        <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
+                          <path d="M8 19v1M8 14v1M12 21v1M12 16v1M16 19v1M16 14v1" />
+                        </svg>
+                      )}
+                      {hoveredSeason === 'Spring' && (
+                        <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M12 22v-7" />
+                          <path d="M9 19h6" />
+                          <path d="M12 15c-3.5 0-6-2.5-6-6 0-4 3-6 6-6s6 2 6 6c0 3.5-2.5 6-6 6z" />
+                        </svg>
+                      )}
+                    </div>
+                    <div>
+                      <span className="text-xs uppercase tracking-widest font-bold opacity-50 block mb-1">{seasonData.label}</span>
+                      <h4 className="font-serif text-2xl text-[#1A1A1A]">{hoveredSeason}</h4>
+                    </div>
+                    <p className="text-sm leading-relaxed text-[#555]">
+                      {seasonData.narrative}
+                    </p>
+                    <div className="pt-3 border-t border-[#E5E1DD]">
+                      <span className="text-xs uppercase tracking-widest font-bold opacity-40 block mb-1">Captures</span>
+                      <span className="font-serif text-3xl" style={{ color: seasonData.color }}>{seasonData.count}</span>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
         </div>
 
         {/* Species Distribution Chart with Lightbox Hover */}
