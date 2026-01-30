@@ -20,25 +20,25 @@ interface SeasonMeta {
 const PREDATOR_INFO: Record<string, PredatorMeta> = {
   'Possum': {
     title: 'Australian Brush-tailed Possum',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Brushtail_possum.jpg/640px-Brushtail_possum.jpg',
+    image: 'https://mangaroa-impact-site.b-cdn.net/possum.png',
     destructiveReason: 'Possums are a major threat to New Zealand forests, stripping the canopy and preying on native bird eggs and chicks. They compete directly with native species for food.',
     methods: 'Live capture traps, leg-hold traps, and targeted baiting programs.'
   },
   'Rat/Stoat': {
     title: 'Stoats & Mustelids',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Mustela_erminea_winter.jpg/640px-Mustela_erminea_winter.jpg',
+    image: 'https://mangaroa-impact-site.b-cdn.net/stoat.png',
     destructiveReason: 'Stoats are the primary predators of many of New Zealand\'s most vulnerable bird species, including kiwi chicks. They are highly efficient hunters that can decimate entire populations.',
     methods: 'DOC200 series traps, A24 self-resetting traps, and community-led trapping lines.'
   },
   'Large Browser': {
     title: 'Large Browsers (Deer, Goats, Pigs)',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Dama_dama8.JPG/640px-Dama_dama8.JPG',
+    image: 'https://mangaroa-impact-site.b-cdn.net/deer.png',
     destructiveReason: 'These animals consume the forest understory, preventing the regeneration of native trees and destroying habitat for ground-dwelling species.',
     methods: 'Professional ground hunting and community culls.'
   },
   'Other': {
     title: 'Invasive Small Mammals',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Igel.JPG/640px-Igel.JPG',
+    image: 'https://mangaroa-impact-site.b-cdn.net/hedgehog.png',
     destructiveReason: 'Hedgehogs, feral cats, and rabbits impact the ecosystem by preying on native insects, bird eggs, and disturbing the soil balance.',
     methods: 'Targeted trapping and exclusion management.'
   }
