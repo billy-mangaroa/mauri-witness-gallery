@@ -1,7 +1,11 @@
 
 import { WitnessRecord, Metric, DomainType } from './types.ts';
 
-export const DOMAINS: DomainType[] = ['Earth', 'People', 'Systems', 'Mauri', 'Network'];
+// All domains (for type safety and future use)
+export const ALL_DOMAINS: DomainType[] = ['Earth', 'People', 'Systems', 'Mauri', 'Network'];
+
+// Active domains shown in navigation (Mauri and Systems temporarily disabled)
+export const DOMAINS: DomainType[] = ['Earth', 'People', 'Network'];
 
 /**
  * Mapping of Airtable 'themes' values to App Domain pages.

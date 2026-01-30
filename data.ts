@@ -2,20 +2,22 @@
 import { EarthRecord, WitnessRecord, Organisation, DomainType } from './types.ts';
 import { THEME_DOMAIN_MAP } from './constants.ts';
 
-// Defensive check for environments where process might not be defined
-const getEnv = (key: string) => {
+// Vite environment variables (import.meta.env)
+const getEnv = (key: string, fallback: string = '') => {
   try {
-    return (typeof process !== 'undefined' && process.env && process.env[key]) || '';
+    // Vite uses import.meta.env for environment variables
+    const env = (import.meta as any).env;
+    return env?.[key] || fallback;
   } catch {
-    return '';
+    return fallback;
   }
 };
 
-const AIRTABLE_API_KEY = getEnv('VITE_AIRTABLE_API_KEY') || '';
-const AIRTABLE_BASE_ID = getEnv('VITE_AIRTABLE_BASE_ID') || 'appbvU8D6GmB51fIz';
-const AIRTABLE_TABLE_NAME = getEnv('VITE_AIRTABLE_TABLE_NAME') || 'Impact Reporting';
+const AIRTABLE_API_KEY = getEnv('VITE_AIRTABLE_API_KEY', '');
+const AIRTABLE_BASE_ID = getEnv('VITE_AIRTABLE_BASE_ID', 'appbvU8D6GmB51fIz');
+const AIRTABLE_TABLE_NAME = getEnv('VITE_AIRTABLE_TABLE_NAME', 'Impact Reporting');
 const AIRTABLE_ORGS_TABLE = 'Organisations';
-const AIRTABLE_VIEW_NAME = getEnv('VITE_AIRTABLE_VIEW_NAME') || '';
+const AIRTABLE_VIEW_NAME = getEnv('VITE_AIRTABLE_VIEW_NAME', '');
 
 export async function fetchWitnessRecords(): Promise<WitnessRecord[]> {
   let allRecords: any[] = [];
