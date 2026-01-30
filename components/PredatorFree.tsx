@@ -20,32 +20,26 @@ interface SeasonMeta {
 const PREDATOR_INFO: Record<string, PredatorMeta> = {
   'Possum': {
     title: 'Australian Brush-tailed Possum',
-    image: '/assets/pests/possum.png',
+    image: 'https://images.unsplash.com/photo-1588929132883-0a9f14feb186?w=600&auto=format&fit=crop&q=80',
     destructiveReason: 'Possums are a major threat to New Zealand forests, stripping the canopy and preying on native bird eggs and chicks. They compete directly with native species for food.',
     methods: 'Live capture traps, leg-hold traps, and targeted baiting programs.'
   },
-  'Stoat': {
+  'Rat/Stoat': {
     title: 'Stoats & Mustelids',
-    image: '/assets/pests/stoat.png',
-    destructiveReason: 'Stoats are the primary predators of many of New Zealand\'s most vulnerable bird species, including kiwi chicks. They are highly efficient hunters.',
-    methods: 'DOC200 series traps, community-led trapping lines.'
-  },
-  'Rat': {
-    title: 'Invasive Rats',
-    image: '/assets/pests/stoat.png',
-    destructiveReason: 'Rats consume seeds, fruits, and small invertebrates, disrupting the food chain. They also prey on the eggs and chicks of native birds.',
-    methods: 'A24 self-resetting traps and targeted baiting.'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Mustela_erminea_upright.jpg/800px-Mustela_erminea_upright.jpg',
+    destructiveReason: 'Stoats are the primary predators of many of New Zealand\'s most vulnerable bird species, including kiwi chicks. They are highly efficient hunters that can decimate entire populations.',
+    methods: 'DOC200 series traps, A24 self-resetting traps, and community-led trapping lines.'
   },
   'Large Browser': {
     title: 'Large Browsers (Deer, Goats, Pigs)',
-    image: '/assets/pests/deer.png',
+    image: 'https://images.unsplash.com/photo-1484406566174-9da000fda645?w=600&auto=format&fit=crop&q=80',
     destructiveReason: 'These animals consume the forest understory, preventing the regeneration of native trees and destroying habitat for ground-dwelling species.',
     methods: 'Professional ground hunting and community culls.'
   },
   'Other': {
     title: 'Invasive Small Mammals',
-    image: '/assets/pests/hedgehog.png',
-    destructiveReason: 'Hedgehogs, feral cats, and rabbits impact the ecosystem by preying on native insects and disturbing the soil balance.',
+    image: 'https://images.unsplash.com/photo-1518882570164-30fba5904a22?w=600&auto=format&fit=crop&q=80',
+    destructiveReason: 'Hedgehogs, feral cats, and rabbits impact the ecosystem by preying on native insects, bird eggs, and disturbing the soil balance.',
     methods: 'Targeted trapping and exclusion management.'
   }
 };
@@ -354,72 +348,78 @@ const PredatorFree: React.FC = () => {
         </div>
 
         {/* Species Distribution Chart with Lightbox Hover */}
-        <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <h3 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Species Group Breakdown</h3>
-            <span className="text-[8px] uppercase tracking-widest font-bold opacity-20 italic">Hover for Impact Details</span>
-          </div>
-          <div className="space-y-6 relative">
+        <div className="space-y-8 relative">
+          <h3 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Species Group Breakdown</h3>
+          
+          <div className="grid grid-cols-2 gap-4">
             {speciesStats.map(([group, count]) => (
               <div 
-                key={group} 
-                className="space-y-2 cursor-pointer group/bar"
+                key={group}
                 onMouseEnter={() => setHoveredSpecies(group)}
                 onMouseLeave={() => setHoveredSpecies(null)}
+                className={`
+                  relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300
+                  ${hoveredSpecies === group 
+                    ? 'border-[#2D4F2D] shadow-lg scale-[1.02]' 
+                    : 'border-[#E5E1DD] hover:border-[#2D4F2D]/30'
+                  }
+                `}
               >
-                <div className="flex justify-between text-[11px] uppercase tracking-widest font-bold transition-colors group-hover/bar:text-[#2D4F2D]">
-                  <span className="opacity-40">{group}</span>
-                  <span>{count}</span>
-                </div>
-                <div className="h-4 bg-[#E5E1DD]/30 rounded-sm overflow-hidden border border-[#E5E1DD]">
-                  <div 
-                    className="h-full bg-[#2D4F2D] transition-all duration-1000 group-hover/bar:opacity-80"
-                    style={{ width: `${totalCount > 0 ? (count / totalCount) * 100 : 0}%` }}
-                  />
+                <div className="flex flex-col gap-3">
+                  <span className="text-xs uppercase tracking-widest font-bold text-[#333]">{group}</span>
+                  <div className="h-2 bg-[#E5E1DD]/40 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-[#2D4F2D] transition-all duration-1000"
+                      style={{ width: `${totalCount > 0 ? (count / totalCount) * 100 : 0}%` }}
+                    />
+                  </div>
+                  <div className="font-serif text-4xl tracking-tighter text-[#1A1A1A]">
+                    {count}
+                  </div>
                 </div>
               </div>
             ))}
-
-            {/* Predator Lightbox/Tooltip */}
-            {hoveredSpecies && PREDATOR_INFO[hoveredSpecies] && (
-              <div className="absolute top-0 right-0 w-80 bg-white/95 backdrop-blur-md shadow-2xl border border-[#E5E1DD] rounded-[24px] overflow-hidden z-50 animate-in fade-in slide-in-from-right-4 duration-300 pointer-events-none">
-                <div className="relative aspect-video bg-black/10 overflow-hidden">
-                  <img 
-                    src={PREDATOR_INFO[hoveredSpecies].image} 
-                    alt={hoveredSpecies} 
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent" />
-                  <div className="absolute bottom-3 left-4 right-4 text-white">
-                    <p className="text-[9px] uppercase tracking-[0.25em] font-bold opacity-70 mb-1">
-                      {hoveredSpecies} group
-                    </p>
-                    <p className="font-serif text-lg leading-tight drop-shadow">
-                      {PREDATOR_INFO[hoveredSpecies].title}
-                    </p>
-                  </div>
-                </div>
-                <div className="p-6 space-y-4">
-                  <div className="space-y-2">
-                    <span className="text-[9px] uppercase tracking-[0.3em] font-black opacity-40 block">
-                      Impact on Mauri
-                    </span>
-                    <p className="text-xs leading-relaxed text-[#444] font-serif">
-                      {PREDATOR_INFO[hoveredSpecies].destructiveReason}
-                    </p>
-                  </div>
-                  <div className="pt-4 border-t border-[#F1F1F1] space-y-2">
-                    <span className="text-[9px] uppercase tracking-[0.3em] font-black opacity-40 block">
-                      Field Response
-                    </span>
-                    <p className="text-xs leading-relaxed text-[#1F3B1F] font-semibold">
-                      {PREDATOR_INFO[hoveredSpecies].methods}
-                    </p>
-                  </div>
+          </div>
+          
+          {/* Predator Lightbox/Tooltip */}
+          {hoveredSpecies && PREDATOR_INFO[hoveredSpecies] && (
+            <div className="absolute top-0 right-full mr-6 w-80 bg-white/95 backdrop-blur-md shadow-2xl border border-[#E5E1DD] rounded-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-right-4 duration-300 pointer-events-none">
+              <div className="relative aspect-[4/3] bg-black/10 overflow-hidden">
+                <img 
+                  src={PREDATOR_INFO[hoveredSpecies].image} 
+                  alt={hoveredSpecies} 
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <p className="text-[9px] uppercase tracking-[0.25em] font-bold opacity-80 mb-1">
+                    {hoveredSpecies}
+                  </p>
+                  <p className="font-serif text-xl leading-tight drop-shadow">
+                    {PREDATOR_INFO[hoveredSpecies].title}
+                  </p>
                 </div>
               </div>
-            )}
-          </div>
+              <div className="p-5 space-y-4">
+                <div className="space-y-2">
+                  <span className="text-[9px] uppercase tracking-[0.3em] font-black opacity-40 block">
+                    Impact on Mauri
+                  </span>
+                  <p className="text-xs leading-relaxed text-[#555]">
+                    {PREDATOR_INFO[hoveredSpecies].destructiveReason}
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-[#E5E1DD] space-y-2">
+                  <span className="text-[9px] uppercase tracking-[0.3em] font-black opacity-40 block">
+                    Field Response
+                  </span>
+                  <p className="text-xs leading-relaxed text-[#2D4F2D] font-medium">
+                    {PREDATOR_INFO[hoveredSpecies].methods}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
