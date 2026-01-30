@@ -16,7 +16,7 @@ const DOMAIN_BACKGROUNDS: Record<DomainType, string> = {
   People: 'https://cdn.shopify.com/s/files/1/0674/5469/7761/files/DSC00252.jpg?v=1721467642',
   Systems: 'https://images.unsplash.com/photo-1454165833767-027ffea9e77b?q=80&w=2000&auto=format&fit=crop',
   Mauri: 'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?q=80&w=2000&auto=format&fit=crop',
-  Network: 'https://images.unsplash.com/photo-1502481851512-e9e2529bbbf9?q=80&w=2000&auto=format&fit=crop'
+  Network: 'https://mangaroa-impact-site.b-cdn.net/mahi%20ex/Screenshot%202026-01-30%20at%203.21.23%E2%80%AFPM.png'
 };
 
 const App: React.FC = () => {
@@ -100,7 +100,7 @@ const App: React.FC = () => {
           backgroundRepeat: 'no-repeat'
         }}
       >
-        <div className="absolute inset-0 bg-black/40 z-0" />
+        <div className={`absolute inset-0 z-0 ${activeDomain === 'Network' ? 'bg-black/25' : 'bg-black/40'}`} />
         
         <div className="relative z-10 max-w-screen-xl mx-auto">
           <div className="space-y-12">

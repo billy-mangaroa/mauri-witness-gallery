@@ -33,7 +33,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
-  const [viewBox, setViewBox] = useState({ x: -450, y: -350, w: 900, h: 700 });
+  const [viewBox, setViewBox] = useState({ x: -600, y: -500, w: 1200, h: 1000 });
   const [isPanning, setIsPanning] = useState(false);
   const lastMousePos = useRef({ x: 0, y: 0 });
   
@@ -43,12 +43,12 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
   const mouseMoveRef = useRef({ x: 0, y: 0 });
   const hasFittedRef = useRef(false);
 
-  // 1. Identify Domain Zones
+  // 1. Identify Domain Zones - Expanded layout for better grouping
   const domainZones = useMemo<DomainZone[]>(() => [
-    { id: 'Environment', label: 'Restoration & Ecology', cx: -180, cy: -120, color: '#2D4F2D' },
-    { id: 'Community', label: 'Community & Culture', cx: 180, cy: -120, color: '#D4A373' },
-    { id: 'Education', label: 'Learning & Research', cx: 180, cy: 120, color: '#4A4E69' },
-    { id: 'Food Systems', label: 'Food & Nourishment', cx: -180, cy: 120, color: '#8E9AAF' },
+    { id: 'Environment', label: 'Restoration & Ecology', cx: -300, cy: -200, color: '#2D4F2D' },
+    { id: 'Community', label: 'Community & Culture', cx: 300, cy: -200, color: '#D4A373' },
+    { id: 'Education', label: 'Learning & Research', cx: 300, cy: 200, color: '#4A4E69' },
+    { id: 'Food Systems', label: 'Food & Nourishment', cx: -300, cy: 200, color: '#8E9AAF' },
     { id: 'Systems', label: 'Governance & Systems', cx: 0, cy: 0, color: '#E5E1DD' }
   ], []);
 
@@ -75,7 +75,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
     return calculatedEdges;
   }, [organisations]);
 
-  // 3. Initialize Nodes
+  // 3. Initialize Nodes - Wider spread for better grouping
   useEffect(() => {
     const initialNodes = organisations.map((org, i) => {
       let targetX = 0;
@@ -83,12 +83,14 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
       const primaryDomain = org.impact_domain[0];
       const zone = domainZones.find(z => primaryDomain?.includes(z.id));
       if (zone) {
-        targetX = zone.cx + (Math.random() - 0.5) * 50;
-        targetY = zone.cy + (Math.random() - 0.5) * 50;
+        // Spread nodes more within their zone
+        targetX = zone.cx + (Math.random() - 0.5) * 120;
+        targetY = zone.cy + (Math.random() - 0.5) * 120;
       } else {
+        // Larger radius for unassigned nodes
         const angle = (i / organisations.length) * Math.PI * 2;
-        targetX = Math.cos(angle) * 150;
-        targetY = Math.sin(angle) * 150;
+        targetX = Math.cos(angle) * 250;
+        targetY = Math.sin(angle) * 250;
       }
 
       return {
@@ -105,20 +107,20 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
     hasFittedRef.current = false;
   }, [organisations, processedEdges, domainZones]);
 
-  // Function to center and scale view to fit nodes
+  // Function to center and scale view to fit nodes with generous margins
   const fitToView = (currentNodes: Node[]) => {
     if (currentNodes.length === 0 || !containerRef.current) return;
     
     const rect = containerRef.current.getBoundingClientRect();
-    const containerW = rect.width || 900;
-    const containerH = rect.height || 700;
+    const containerW = rect.width || 1200;
+    const containerH = rect.height || 1000;
 
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     currentNodes.forEach(n => {
-      minX = Math.min(minX, n.x - 60); // node radius + buffer
-      maxX = Math.max(maxX, n.x + 60);
-      minY = Math.min(minY, n.y - 60);
-      maxY = Math.max(maxY, n.y + 60);
+      minX = Math.min(minX, n.x - 80); // Larger buffer for expanded view
+      maxX = Math.max(maxX, n.x + 80);
+      minY = Math.min(minY, n.y - 80);
+      maxY = Math.max(maxY, n.y + 80);
     });
 
     const contentW = maxX - minX;
@@ -126,11 +128,11 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
     const centerX = (minX + maxX) / 2;
     const centerY = (minY + maxY) / 2;
 
-    const margin = 0.2; // 20% margin
+    const margin = 0.15; // 15% margin for breathing room
     const scale = Math.max(
       contentW / (containerW * (1 - margin)), 
       contentH / (containerH * (1 - margin)),
-      1.0 // don't zoom in too much by default
+      1.2 // Slight zoom out for overview
     );
     
     const finalW = containerW * scale;
@@ -166,7 +168,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
         const nextNodes = prevNodes.map(n => ({ ...n }));
         const alpha = alphaRef.current;
         
-        // a. Repulsion (Many-Body) - Increased for spacing
+        // a. Repulsion (Many-Body) - Stronger for better spacing
         for (let i = 0; i < nextNodes.length; i++) {
           for (let j = i + 1; j < nextNodes.length; j++) {
             const dx = nextNodes[i].x - nextNodes[j].x;
@@ -174,8 +176,8 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
             const distSq = dx * dx + dy * dy || 1;
             const dist = Math.sqrt(distSq);
             
-            // Stronger repulsion at close range
-            const force = (alpha * 1500) / distSq;
+            // Much stronger repulsion for wider spacing
+            const force = (alpha * 3500) / distSq;
             const fx = (dx / dist) * force;
             const fy = (dy / dist) * force;
             
@@ -184,12 +186,12 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
             nextNodes[j].vx -= fx;
             nextNodes[j].vy -= fy;
 
-            // Anti-Overlap Collision
-            const minPadding = 85; // 30 (radius) * 2 + 25 (padding)
+            // Anti-Overlap Collision - Larger padding
+            const minPadding = 110; // Increased spacing between nodes
             if (dist < minPadding) {
               const overlap = minPadding - dist;
-              const ox = (dx / dist) * overlap * 0.2;
-              const oy = (dy / dist) * overlap * 0.2;
+              const ox = (dx / dist) * overlap * 0.25;
+              const oy = (dy / dist) * overlap * 0.25;
               nextNodes[i].vx += ox;
               nextNodes[i].vy += oy;
               nextNodes[j].vx -= ox;
@@ -198,7 +200,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
           }
         }
 
-        // b. Attraction (Edges) - Balanced link distance
+        // b. Attraction (Edges) - Longer link distance for breathing room
         edges.forEach(edge => {
           const source = nextNodes.find(n => n.id === edge.source);
           const target = nextNodes.find(n => n.id === edge.target);
@@ -206,8 +208,8 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
             const dx = target.x - source.x;
             const dy = target.y - source.y;
             const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            const desiredDist = 140; 
-            const strength = 0.01 * edge.weight * alpha * (dist - desiredDist) / dist;
+            const desiredDist = 200; // Increased link distance
+            const strength = 0.008 * edge.weight * alpha * (dist - desiredDist) / dist;
             const fx = dx * strength;
             const fy = dy * strength;
             
@@ -218,7 +220,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
           }
         });
 
-        // c. Domain Zone Attraction
+        // c. Domain Zone Attraction - Stronger grouping by domain
         nextNodes.forEach(n => {
           const relevantZones = domainZones.filter(z => 
             n.impact_domain.some(d => d.includes(z.id))
@@ -230,15 +232,17 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
             avgX /= relevantZones.length;
             avgY /= relevantZones.length;
 
-            n.vx += (avgX - n.x) * 0.012 * alpha;
-            n.vy += (avgY - n.y) * 0.012 * alpha;
+            // Stronger pull toward domain zone
+            n.vx += (avgX - n.x) * 0.018 * alpha;
+            n.vy += (avgY - n.y) * 0.018 * alpha;
           }
 
-          n.vx -= n.x * 0.003 * alpha;
-          n.vy -= n.y * 0.003 * alpha;
+          // Weaker centering force to allow spread
+          n.vx -= n.x * 0.002 * alpha;
+          n.vy -= n.y * 0.002 * alpha;
           
-          n.vx *= 0.82; // Damping
-          n.vy *= 0.82;
+          n.vx *= 0.80; // Slightly more damping for stability
+          n.vy *= 0.80;
           
           n.x += n.vx;
           n.y += n.vy;
@@ -373,19 +377,21 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ organisations, onOrgClick }
           ))}
         </defs>
 
-        {/* 1. Background Domain Zones */}
-        <g id="domain-zones" opacity="0.4">
+        {/* 1. Background Domain Zones - Larger for expanded view */}
+        <g id="domain-zones" opacity="0.5">
           {domainZones.map(zone => (
             <g key={zone.id}>
               <circle 
-                cx={zone.cx} cy={zone.cy} r="240" 
-                fill={zone.color} fillOpacity="0.03"
-                stroke={zone.color} strokeOpacity="0.08" strokeWidth="1"
+                cx={zone.cx} cy={zone.cy} r="320" 
+                fill={zone.color} fillOpacity="0.04"
+                stroke={zone.color} strokeOpacity="0.12" strokeWidth="1.5"
+                strokeDasharray="8 4"
               />
               <text 
-                x={zone.cx} y={zone.cy - 250} 
+                x={zone.cx} y={zone.cy - 340} 
                 textAnchor="middle" 
-                className="text-[10px] uppercase tracking-[0.4em] font-black opacity-10 fill-[#1A1A1A]"
+                className="text-[11px] uppercase tracking-[0.5em] font-black fill-current"
+                style={{ fill: zone.color, opacity: 0.4 }}
               >
                 {zone.label}
               </text>
