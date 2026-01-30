@@ -9,6 +9,7 @@ import PredatorFree from './components/PredatorFree.tsx';
 import NavigatorX from './components/NavigatorX.tsx';
 import Network from './components/Network.tsx';
 import TeamNetwork from './components/TeamNetwork.tsx';
+import MahiExchange from './components/MahiExchange.tsx';
 
 const DOMAIN_BACKGROUNDS: Record<DomainType, string> = {
   Earth: 'https://cdn.shopify.com/s/files/1/0674/5469/7761/files/Tree_Planting.jpg?v=1754355799',
@@ -102,25 +103,25 @@ const App: React.FC = () => {
         <div className="absolute inset-0 bg-black/40 z-0" />
         
         <div className="relative z-10 max-w-screen-xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-            <div className="space-y-10">
+          <div className="space-y-12">
+            <div className="space-y-6">
               <span className="text-[10px] uppercase tracking-[0.6em] font-black block opacity-70">The Living Impact</span>
               <h1 className="font-serif text-7xl md:text-9xl tracking-tighter leading-[0.85]">
                 {activeDomain}
               </h1>
             </div>
-            <div className="space-y-8 pt-4">
-              <h2 className="font-serif text-3xl md:text-4xl leading-tight text-white">
+            <div className="space-y-6 max-w-2xl">
+              <h2 className="font-serif text-2xl md:text-3xl leading-tight text-white/95">
                 {domainNarrative.subheading}
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {domainNarrative.intro.map((para, i) => (
-                  <h3 
+                  <p 
                     key={i} 
-                    className="font-serif text-xl md:text-2xl font-light leading-relaxed italic last:not-italic last:font-normal text-white/90 last:text-white"
+                    className="text-sm md:text-base font-light leading-relaxed text-white/80"
                   >
                     {para}
-                  </h3>
+                  </p>
                 ))}
               </div>
             </div>
@@ -159,17 +160,24 @@ const App: React.FC = () => {
       {/* Main Content Explorer & Evidence Layer */}
       <main className="max-w-screen-xl mx-auto px-6 py-32 space-y-40">
         
-        {/* People Domain: Team Network Section */}
+        {/* People Domain: Team Network + Mahi Exchange Section */}
         {activeDomain === 'People' && (
-          <section className="space-y-16">
-            <div className="space-y-4 max-w-2xl">
-              <h2 className="font-serif text-5xl tracking-tight leading-tight">Team Network</h2>
-              <p className="text-[11px] uppercase tracking-[0.4em] font-bold opacity-40">
-                A mycelial map of the hands and hearts behind the mission
-              </p>
-            </div>
-            <TeamNetwork />
-          </section>
+          <div className="space-y-40">
+            <section className="space-y-16">
+              <div className="space-y-4 max-w-2xl">
+                <h2 className="font-serif text-5xl tracking-tight leading-tight">Team Network</h2>
+                <p className="text-[11px] uppercase tracking-[0.4em] font-bold opacity-40">
+                  A mycelial map of the hands and hearts behind the mission
+                </p>
+              </div>
+              <TeamNetwork />
+            </section>
+            
+            {/* Mahi Exchange Programme */}
+            <section className="space-y-16 py-20 border-t border-[#E5E1DD]">
+              <MahiExchange />
+            </section>
+          </div>
         )}
 
         {/* Network Specific Page */}

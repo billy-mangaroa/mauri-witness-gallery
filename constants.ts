@@ -72,15 +72,15 @@ export const DOMAIN_NARRATIVES: Record<DomainType, DomainNarrative> = {
 export const DOMAIN_METRICS: Record<DomainType, Metric[]> = {
   Earth: [
     { id: 'e1', domain: 'Earth', label: 'Soil Carbon', description: 'Permanent plots, 0–10cm horizon', result: '6.1%', trend: 'up' },
-    { id: 'e2', domain: 'Earth', label: 'Indicator Species', description: '5 forest birds recorded consistently since baseline', result: '42', trend: 'up' },
+    { id: 'e2', domain: 'Earth', label: 'Predators Removed', description: 'Total since 2019 baseline', result: '1,847', trend: 'up' },
     { id: 'e3', domain: 'Earth', label: 'Wetland Restored', description: 'Hectares restored since baseline', result: '1.4 ha', trend: 'up' },
-    { id: 'e4', domain: 'Earth', label: 'Predator Pressure', description: 'Active traps + annual removals', result: '817', trend: 'up' }
+    { id: 'e4', domain: 'Earth', label: 'Active Traps', description: 'Monitoring network across valley', result: '420+', trend: 'up' }
   ],
   People: [
-    { id: 'p1', domain: 'People', label: 'People Engaged', description: 'Unique participants FY25', result: '1,420', trend: 'up' },
-    { id: 'p2', domain: 'People', label: 'Median Hours', description: 'Average time per participant', result: '6.5', trend: 'up' },
-    { id: 'p3', domain: 'People', label: 'Public Events', description: 'Community gatherings hosted', result: '14', trend: 'up' },
-    { id: 'p4', domain: 'People', label: 'Belonging Score', description: 'Post-visit survey (1–5 scale)', result: '4.2', trend: 'up' }
+    { id: 'p1', domain: 'People', label: 'Mahi Exchangers', description: 'From 12 countries since 2024', result: '31', trend: 'up' },
+    { id: 'p2', domain: 'People', label: 'Days Contributed', description: 'Total exchanger days on-farm', result: '1,118', trend: 'up' },
+    { id: 'p3', domain: 'People', label: 'Work Hours', description: 'Hours across all programmes', result: '3,500+', trend: 'up' },
+    { id: 'p4', domain: 'People', label: 'Average Stay', description: 'Days per exchanger', result: '36', trend: 'up' }
   ],
   Systems: [
     { id: 's1', domain: 'Systems', label: 'Regen Revenue', description: 'Income from regenerative activities', result: '47%', trend: 'up' },
