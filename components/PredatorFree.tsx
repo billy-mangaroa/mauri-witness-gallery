@@ -20,25 +20,25 @@ interface SeasonMeta {
 const PREDATOR_INFO: Record<string, PredatorMeta> = {
   'Possum': {
     title: 'Australian Brush-tailed Possum',
-    image: 'https://images.unsplash.com/photo-1588929132883-0a9f14feb186?w=600&auto=format&fit=crop&q=80',
+    image: 'https://www.doc.govt.nz/thumbs/hero/contentassets/e0b648d93b8a4568b5c8bc498ddae7fc/possum-in-tree-pete-wilson-1200.jpg',
     destructiveReason: 'Possums are a major threat to New Zealand forests, stripping the canopy and preying on native bird eggs and chicks. They compete directly with native species for food.',
     methods: 'Live capture traps, leg-hold traps, and targeted baiting programs.'
   },
   'Rat/Stoat': {
     title: 'Stoats & Mustelids',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Mustela_erminea_upright.jpg/800px-Mustela_erminea_upright.jpg',
+    image: 'https://www.doc.govt.nz/thumbs/hero/contentassets/34f234dae57b4de6914dcf498f9fdf6e/stoat-with-prey-a-wills-1200.jpg',
     destructiveReason: 'Stoats are the primary predators of many of New Zealand\'s most vulnerable bird species, including kiwi chicks. They are highly efficient hunters that can decimate entire populations.',
     methods: 'DOC200 series traps, A24 self-resetting traps, and community-led trapping lines.'
   },
   'Large Browser': {
     title: 'Large Browsers (Deer, Goats, Pigs)',
-    image: 'https://images.unsplash.com/photo-1484406566174-9da000fda645?w=600&auto=format&fit=crop&q=80',
+    image: 'https://www.doc.govt.nz/thumbs/hero/contentassets/139a37d5820c4cabbb5c0e01cb291bff/fallow-deer-stag-paddy-ryan-1200.jpg',
     destructiveReason: 'These animals consume the forest understory, preventing the regeneration of native trees and destroying habitat for ground-dwelling species.',
     methods: 'Professional ground hunting and community culls.'
   },
   'Other': {
     title: 'Invasive Small Mammals',
-    image: 'https://images.unsplash.com/photo-1518882570164-30fba5904a22?w=600&auto=format&fit=crop&q=80',
+    image: 'https://www.doc.govt.nz/thumbs/hero/contentassets/67a0fb4050b745c4808e8bdcc0d04994/hedgehog-jared-wilson-1200.jpg',
     destructiveReason: 'Hedgehogs, feral cats, and rabbits impact the ecosystem by preying on native insects, bird eggs, and disturbing the soil balance.',
     methods: 'Targeted trapping and exclusion management.'
   }
