@@ -111,11 +111,6 @@ const PredatorFree: React.FC = () => {
     return Object.entries(seasons);
   }, [filteredRecords]);
 
-  const peakSeason = useMemo(() => {
-    const sorted = [...seasonalTrend].sort((a, b) => b[1].count - a[1].count);
-    return sorted[0]?.[0] || 'N/A';
-  }, [seasonalTrend]);
-
   const resetFilters = () => {
     setMinYear(2022);
     setMaxYear(2025);
@@ -150,57 +145,77 @@ const PredatorFree: React.FC = () => {
 
       {/* Control Surface */}
       <div className="bg-[#F9F8F6] p-10 md:p-16 rounded-[24px] border border-[#E5E1DD] space-y-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-end">
-          <div className="space-y-6">
-            <div className="flex justify-between items-center mb-2">
-               <h4 className="text-[10px] uppercase tracking-widest font-black opacity-30">Active Timeline</h4>
-               <span className="text-[10px] font-mono opacity-50">{minYear} — {maxYear}</span>
-            </div>
-            <div className="relative h-2 bg-[#E5E1DD] rounded-full">
-              <input 
-                type="range" 
-                min="2022" 
-                max="2025" 
-                value={minYear} 
-                onChange={(e) => setMinYear(Math.min(parseInt(e.target.value), maxYear))}
-                className="absolute w-full h-full appearance-none bg-transparent pointer-events-auto cursor-pointer accent-[#2D4F2D]"
-              />
-              <input 
-                type="range" 
-                min="2022" 
-                max="2025" 
-                value={maxYear} 
-                onChange={(e) => setMaxYear(Math.max(parseInt(e.target.value), minYear))}
-                className="absolute w-full h-full appearance-none bg-transparent pointer-events-auto cursor-pointer accent-[#2D4F2D]"
-              />
-            </div>
-            <div className="flex justify-between text-[9px] font-bold opacity-30 pt-2">
-              <span>2022 (Baseline)</span>
-              <span>2023</span>
-              <span>2024</span>
-              <span>2025 (Active)</span>
-            </div>
-          </div>
-
-          <div className="flex justify-end">
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h4 className="text-[10px] uppercase tracking-widest font-black opacity-30">Select Year Range</h4>
             <button 
               onClick={resetFilters}
-              className="text-[9px] uppercase tracking-widest font-black text-[#2D4F2D] border-b border-[#2D4F2D] pb-1 transition-opacity hover:opacity-50"
+              className="text-[9px] uppercase tracking-widest font-bold text-[#2D4F2D] opacity-60 hover:opacity-100 transition-opacity"
             >
-              Reset Timeline
+              Reset
             </button>
+          </div>
+          
+          {/* Timeline Slider */}
+          <div className="relative py-8 px-4">
+            {/* Connecting line */}
+            <div className="absolute top-1/2 left-8 right-8 h-[2px] bg-[#2D4F2D]/80 -translate-y-1/2" />
+            
+            {/* Year nodes */}
+            <div className="relative flex justify-between items-center">
+              {[2022, 2023, 2024, 2025].map((year) => {
+                const isInRange = year >= minYear && year <= maxYear;
+                
+                return (
+                  <button
+                    key={year}
+                    onClick={() => {
+                      if (year < minYear) {
+                        setMinYear(year);
+                      } else if (year > maxYear) {
+                        setMaxYear(year);
+                      } else if (year === minYear && year < maxYear) {
+                        setMinYear(year + 1);
+                      } else if (year === maxYear && year > minYear) {
+                        setMaxYear(year - 1);
+                      } else if (year > minYear && year < maxYear) {
+                        setMinYear(year);
+                        setMaxYear(year);
+                      }
+                    }}
+                    className="relative flex flex-col items-center group"
+                  >
+                    {/* Node circle */}
+                    <div className={`
+                      w-4 h-4 rounded-full border-2 border-[#2D4F2D] transition-all duration-300 ease-out
+                      ${isInRange 
+                        ? 'bg-[#2D4F2D] scale-110' 
+                        : 'bg-[#F9F8F6] group-hover:bg-[#2D4F2D]/20'
+                      }
+                    `} />
+                    
+                    {/* Year label */}
+                    <span className={`
+                      absolute top-8 transition-all duration-300
+                      ${isInRange 
+                        ? 'text-[#2D4F2D] font-bold text-base' 
+                        : 'text-[#999] font-medium text-sm'
+                      }
+                    `}>
+                      {year}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-3 gap-8">
           <div className="space-y-2">
             <h4 className="text-[9px] uppercase tracking-widest opacity-30 font-bold block">Total Predators Removed</h4>
             <span className="font-serif text-6xl tracking-tighter">{totalCount}</span>
-          </div>
-          <div className="space-y-2">
-            <h4 className="text-[9px] uppercase tracking-widest opacity-30 font-bold block">Peak Pressure Period</h4>
-            <span className="font-serif text-4xl italic">{peakSeason}</span>
           </div>
           <div className="space-y-2">
             <h4 className="text-[9px] uppercase tracking-widest opacity-30 font-bold block">Dominant Species</h4>
