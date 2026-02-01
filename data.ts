@@ -2,56 +2,21 @@
 import { EarthRecord, WitnessRecord, Organisation, DomainType, EventRecord, TeamMember } from './types.ts';
 import { THEME_DOMAIN_MAP } from './constants.ts';
 
-// Vite environment variables (import.meta.env)
-const getEnv = (key: string, fallback: string = '') => {
-  try {
-    // Vite uses import.meta.env for environment variables
-    const env = (import.meta as any).env;
-    return env?.[key] || fallback;
-  } catch {
-    return fallback;
-  }
-};
-
-const AIRTABLE_API_KEY = getEnv('VITE_AIRTABLE_API_KEY', '');
-const AIRTABLE_BASE_ID = getEnv('VITE_AIRTABLE_BASE_ID', 'appbvU8D6GmB51fIz');
-const AIRTABLE_TABLE_NAME = getEnv('VITE_AIRTABLE_TABLE_NAME', 'Impact Reporting');
-const AIRTABLE_ORGS_TABLE = 'Organisations';
-const AIRTABLE_VIEW_NAME = getEnv('VITE_AIRTABLE_VIEW_NAME', '');
-const AIRTABLE_TEAM_TABLE = getEnv('VITE_AIRTABLE_TEAM_TABLE', 'Team');
+const AIRTABLE_ENDPOINT = (import.meta as any).env?.PROD
+  ? '/.netlify/functions/airtable'
+  : '/api/airtable';
 
 export async function fetchWitnessRecords(): Promise<WitnessRecord[]> {
-  let allRecords: any[] = [];
-  let offset = '';
-  
   try {
-    do {
-      const url = new URL(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`);
-      if (AIRTABLE_VIEW_NAME) url.searchParams.append('view', AIRTABLE_VIEW_NAME);
-      if (offset) url.searchParams.append('offset', offset);
-      url.searchParams.append('pageSize', '100');
+    const response = await fetch(`${AIRTABLE_ENDPOINT}?type=records`);
+    if (!response.ok) {
+      const errorDetail = await response.text();
+      throw new Error(`Airtable Fetch Failed: ${response.status} - ${errorDetail}`);
+    }
+    const data = await response.json();
+    const allRecords = data.records || [];
 
-      const response = await fetch(url.toString(), {
-        headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}` }
-      });
-
-      if (!response.ok) {
-        let errorDetail = '';
-        try {
-          const errorJson = await response.json();
-          errorDetail = ` - ${errorJson.error?.message || JSON.stringify(errorJson.error)}`;
-        } catch {
-          errorDetail = ` - ${response.statusText || 'Unknown Error'}`;
-        }
-        throw new Error(`Airtable Fetch Failed: ${response.status}${errorDetail}`);
-      }
-
-      const data = await response.json();
-      allRecords = [...allRecords, ...(data.records || [])];
-      offset = data.offset;
-    } while (offset);
-
-    return allRecords.map((record): WitnessRecord | null => {
+    return allRecords.map((record: any): WitnessRecord | null => {
       const fields = record.fields;
       
       const rawThemes = fields.themes;
@@ -102,27 +67,13 @@ export async function fetchWitnessRecords(): Promise<WitnessRecord[]> {
 }
 
 export async function fetchOrganisations(): Promise<Organisation[]> {
-  let allRecords: any[] = [];
-  let offset = '';
-  
   try {
-    do {
-      const url = new URL(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_ORGS_TABLE)}`);
-      if (offset) url.searchParams.append('offset', offset);
-      url.searchParams.append('pageSize', '100');
+    const response = await fetch(`${AIRTABLE_ENDPOINT}?type=orgs`);
+    if (!response.ok) throw new Error(`Airtable Orgs Fetch Failed: ${response.status}`);
+    const data = await response.json();
+    const allRecords = data.records || [];
 
-      const response = await fetch(url.toString(), {
-        headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}` }
-      });
-
-      if (!response.ok) throw new Error(`Airtable Orgs Fetch Failed: ${response.status}`);
-
-      const data = await response.json();
-      allRecords = [...allRecords, ...(data.records || [])];
-      offset = data.offset;
-    } while (offset);
-
-    return allRecords.map((record): Organisation => {
+    return allRecords.map((record: any): Organisation => {
       const fields = record.fields;
       return {
         id: record.id,
@@ -141,8 +92,9 @@ export async function fetchOrganisations(): Promise<Organisation[]> {
   }
 }
 
-const mapTeamPod = (value?: string): TeamMember['pod'] => {
-  const normalized = (value || '').toLowerCase();
+const mapTeamPod = (value?: string | string[]): TeamMember['pod'] => {
+  const firstValue = Array.isArray(value) ? value[0] : value;
+  const normalized = (firstValue || '').toLowerCase();
   if (normalized.includes('land')) return 'Land';
   if (normalized.includes('community')) return 'Community';
   if (normalized.includes('education') || normalized.includes('research')) return 'Education';
@@ -152,27 +104,13 @@ const mapTeamPod = (value?: string): TeamMember['pod'] => {
 };
 
 export async function fetchTeamMembers(): Promise<TeamMember[]> {
-  let allRecords: any[] = [];
-  let offset = '';
-
   try {
-    do {
-      const url = new URL(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TEAM_TABLE)}`);
-      if (offset) url.searchParams.append('offset', offset);
-      url.searchParams.append('pageSize', '100');
+    const response = await fetch(`${AIRTABLE_ENDPOINT}?type=team`);
+    if (!response.ok) throw new Error(`Airtable Team Fetch Failed: ${response.status}`);
+    const data = await response.json();
+    const allRecords = data.records || [];
 
-      const response = await fetch(url.toString(), {
-        headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}` }
-      });
-
-      if (!response.ok) throw new Error(`Airtable Team Fetch Failed: ${response.status}`);
-
-      const data = await response.json();
-      allRecords = [...allRecords, ...(data.records || [])];
-      offset = data.offset;
-    } while (offset);
-
-    return allRecords.map((record): TeamMember => {
+    return allRecords.map((record: any): TeamMember => {
       const fields = record.fields || {};
       const name = fields.name || fields.Name || 'Team Member';
       const role = fields.role || fields.Role || 'Team';
@@ -181,7 +119,15 @@ export async function fetchTeamMembers(): Promise<TeamMember[]> {
         ? fields.image[0]
         : Array.isArray(fields.Image)
           ? fields.Image[0]
-          : null;
+          : Array.isArray(fields.photo)
+            ? fields.photo[0]
+            : Array.isArray(fields.Photo)
+              ? fields.Photo[0]
+              : Array.isArray(fields.headshot)
+                ? fields.headshot[0]
+                : Array.isArray(fields.Headshot)
+                  ? fields.Headshot[0]
+                  : null;
 
       return {
         id: record.id,
@@ -202,39 +148,17 @@ export async function getRecordsForDomain(domain: DomainType): Promise<WitnessRe
   return all.filter(r => r.domain === domain);
 }
 
-const AIRTABLE_EVENTS_TABLE = 'Events';
-
 export async function fetchEvents(): Promise<EventRecord[]> {
-  let allRecords: any[] = [];
-  let offset = '';
-  
   try {
-    do {
-      const url = new URL(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_EVENTS_TABLE)}`);
-      if (offset) url.searchParams.append('offset', offset);
-      url.searchParams.append('pageSize', '100');
+    const response = await fetch(`${AIRTABLE_ENDPOINT}?type=events`);
+    if (!response.ok) {
+      const errorDetail = await response.text();
+      throw new Error(`Airtable Events Fetch Failed: ${response.status} - ${errorDetail}`);
+    }
+    const data = await response.json();
+    const allRecords = data.records || [];
 
-      const response = await fetch(url.toString(), {
-        headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}` }
-      });
-
-      if (!response.ok) {
-        let errorDetail = '';
-        try {
-          const errorJson = await response.json();
-          errorDetail = ` - ${errorJson.error?.message || JSON.stringify(errorJson.error)}`;
-        } catch {
-          errorDetail = ` - ${response.statusText || 'Unknown Error'}`;
-        }
-        throw new Error(`Airtable Events Fetch Failed: ${response.status}${errorDetail}`);
-      }
-
-      const data = await response.json();
-      allRecords = [...allRecords, ...(data.records || [])];
-      offset = data.offset;
-    } while (offset);
-
-    return allRecords.map((record): EventRecord => {
+    return allRecords.map((record: any): EventRecord => {
       const fields = record.fields;
       const eventDate = fields.event_date || fields.Date || fields.date;
       const year = eventDate ? new Date(eventDate).getFullYear() : new Date().getFullYear();

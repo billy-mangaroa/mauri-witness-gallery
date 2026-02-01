@@ -137,7 +137,10 @@ const ImpactChatbot: React.FC<ImpactChatbotProps> = ({ activeDomain }) => {
   };
 
   const callGemini = async (text: string) => {
-    const response = await fetch('/api/chat', {
+    const chatEndpoint = (import.meta as any).env?.PROD
+      ? '/.netlify/functions/chat'
+      : '/api/chat';
+    const response = await fetch(chatEndpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
