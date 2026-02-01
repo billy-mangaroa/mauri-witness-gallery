@@ -22,26 +22,36 @@ const PREDATOR_INFO: Record<string, PredatorMeta> = {
     title: 'Australian Brush-tailed Possum',
     image: 'https://mangaroa-impact-site.b-cdn.net/possum.png',
     destructiveReason: 'Possums are a major threat to New Zealand forests, stripping the canopy and preying on native bird eggs and chicks. They compete directly with native species for food.',
-    methods: 'Live capture traps, leg-hold traps, and targeted baiting programs.'
+    methods: 'Live capture traps, leg-hold traps, and targeted baiting programs used for predator suppression.'
   },
   'Rat/Stoat': {
     title: 'Stoats & Mustelids',
     image: 'https://mangaroa-impact-site.b-cdn.net/stoat.png',
     destructiveReason: 'Stoats are the primary predators of many of New Zealand\'s most vulnerable bird species, including kiwi chicks. They are highly efficient hunters that can decimate entire populations.',
-    methods: 'DOC200 series traps, A24 self-resetting traps, and community-led trapping lines.'
+    methods: 'DOC200 series traps, A24 self-resetting traps, and community-led trapping lines for predator suppression.'
   },
   'Large Browser': {
     title: 'Large Browsers (Deer, Goats, Pigs)',
     image: 'https://mangaroa-impact-site.b-cdn.net/deer.png',
     destructiveReason: 'These animals consume the forest understory, preventing the regeneration of native trees and destroying habitat for ground-dwelling species.',
-    methods: 'Professional ground hunting and community culls.'
+    methods: 'Professional ground hunting and community culls focused on predator suppression.'
   },
   'Other': {
     title: 'Invasive Small Mammals',
     image: 'https://mangaroa-impact-site.b-cdn.net/hedgehog.png',
     destructiveReason: 'Hedgehogs, feral cats, and rabbits impact the ecosystem by preying on native insects, bird eggs, and disturbing the soil balance.',
-    methods: 'Targeted trapping and exclusion management.'
+    methods: 'Targeted trapping and exclusion management for predator suppression.'
   }
+};
+
+const TRAP_NETWORK_BY_YEAR: Record<number, number> = {
+  2019: 120,
+  2020: 180,
+  2021: 240,
+  2022: 310,
+  2023: 360,
+  2024: 400,
+  2025: 420
 };
 
 const PredatorFree: React.FC = () => {
@@ -67,7 +77,7 @@ const PredatorFree: React.FC = () => {
     return Object.entries(map).sort((a, b) => b[1] - a[1]);
   }, [filteredRecords]);
 
-  const seasonalTrend = useMemo(() => {
+  const seasonalTrendAll = useMemo(() => {
     const seasons: Record<string, SeasonMeta> = {
       'Summer': { 
         count: 0, 
@@ -106,6 +116,58 @@ const PredatorFree: React.FC = () => {
     return Object.entries(seasons);
   }, [filteredRecords]);
 
+  const seasonalTrendByGroup = useMemo(() => {
+    const groups = ['Possum', 'Rat/Stoat', 'Large Browser', 'Other'];
+    const buildSeasonTemplate = () => ({
+      'Summer': { 
+        count: 0, 
+        color: '#E9C46A',
+        label: 'Dec – Feb',
+        narrative: 'Warm nights, high movement. Possums, rats and hedgehogs are highly active and quickly find unprotected food sources.'
+      },
+      'Autumn': { 
+        count: 0, 
+        color: '#F4A261',
+        label: 'Mar – May',
+        narrative: 'Autumn is when we lean into landscape-scale culls, targeting browsers before winter browsing pressure bites hardest.'
+      },
+      'Winter': { 
+        count: 0, 
+        color: '#264653',
+        label: 'Jun – Aug',
+        narrative: 'Cold months compress movement along warm gullies and ridgelines, making traps and thermal-assisted hunts more efficient.'
+      },
+      'Spring': { 
+        count: 0, 
+        color: '#2A9D8F',
+        label: 'Sep – Nov',
+        narrative: 'Nesting season. Reducing mustelids and rats now gives native chicks their best chance to make it through their first weeks.'
+      }
+    } as Record<string, SeasonMeta>);
+
+    const map: Record<string, [string, SeasonMeta][]> = {};
+    groups.forEach(group => {
+      const seasons = buildSeasonTemplate();
+      filteredRecords.filter(r => r.speciesGroup === group).forEach(r => {
+        if ([11, 0, 1].includes(r.month)) seasons['Summer'].count += r.count;
+        else if ([2, 3, 4].includes(r.month)) seasons['Autumn'].count += r.count;
+        else if ([5, 6, 7].includes(r.month)) seasons['Winter'].count += r.count;
+        else if ([8, 9, 10].includes(r.month)) seasons['Spring'].count += r.count;
+      });
+      map[group] = Object.entries(seasons);
+    });
+    return map;
+  }, [filteredRecords]);
+
+  const activeSeasonalTrend = hoveredSpecies && seasonalTrendByGroup[hoveredSpecies]
+    ? seasonalTrendByGroup[hoveredSpecies]
+    : seasonalTrendAll;
+
+  const activeTrapCount = useMemo(() => {
+    const year = Math.max(Math.min(maxYear, 2025), 2019);
+    return TRAP_NETWORK_BY_YEAR[year] || TRAP_NETWORK_BY_YEAR[2025];
+  }, [maxYear]);
+
   const resetFilters = () => {
     setMinYear(2019);
     setMaxYear(2025);
@@ -116,7 +178,7 @@ const PredatorFree: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className="space-y-8">
           <div className="space-y-4">
-            <h2 className="font-serif text-5xl md:text-7xl tracking-tighter leading-tight">Predator Free Mangaroa</h2>
+            <h2 className="font-serif text-5xl md:text-7xl tracking-tighter leading-tight">Predator Suppression Mangaroa</h2>
             <p className="text-[11px] uppercase tracking-[0.4em] font-bold opacity-40">Restoring the Mauri of the Valley</p>
           </div>
           <p className="font-serif text-2xl text-[#555] leading-relaxed italic">
@@ -129,7 +191,7 @@ const PredatorFree: React.FC = () => {
             </p>
           </div>
           <div className="text-sm leading-relaxed text-[#666] max-w-lg">
-            Our predator control program is a cornerstone of the Mangaroa regeneration project. By combining traditional field skills with modern data tracking, we are creating a sanctuary for our unique New Zealand biodiversity to return and thrive.
+            Our predator control program is a cornerstone of the Mangaroa regeneration project. By combining traditional field skills with modern data tracking, we are creating a sanctuary for our unique New Zealand biodiversity to return and thrive via predator suppression.
           </div>
         </div>
         <div className="rounded-2xl overflow-hidden aspect-[4/3] shadow-2xl">
@@ -224,7 +286,8 @@ const PredatorFree: React.FC = () => {
           </div>
           <div className="space-y-2">
             <h4 className="text-[9px] uppercase tracking-widest opacity-30 font-bold block">Monitoring Traps</h4>
-            <span className="font-serif text-4xl">420+</span>
+            <span className="font-serif text-4xl">{activeTrapCount.toLocaleString()}+</span>
+            <span className="text-[8px] uppercase tracking-widest font-bold opacity-30">As of {maxYear}</span>
           </div>
         </div>
       </div>
@@ -234,10 +297,15 @@ const PredatorFree: React.FC = () => {
         
         {/* Seasonal Trends */}
         <div className="space-y-8 relative">
-          <h3 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Seasonal Capture Pulse</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Seasonal Pressure by Species</h3>
+            <span className="text-[8px] uppercase tracking-[0.3em] font-bold opacity-30">
+              {hoveredSpecies ? `${hoveredSpecies} focus` : 'All species'}
+            </span>
+          </div>
           
           <div className="grid grid-cols-2 gap-4">
-            {seasonalTrend.map(([season, data]) => {
+            {activeSeasonalTrend.map(([season, data]) => {
               const icons: Record<string, React.ReactNode> = {
                 Summer: (
                   <svg viewBox="0 0 24 24" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -301,7 +369,7 @@ const PredatorFree: React.FC = () => {
           {hoveredSeason && (
             <div className="absolute top-0 left-full ml-6 w-72 bg-white/95 backdrop-blur-md shadow-2xl border border-[#E5E1DD] rounded-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-left-4 duration-300 pointer-events-none">
               {(() => {
-                const seasonData = seasonalTrend.find(([s]) => s === hoveredSeason)?.[1];
+                 const seasonData = activeSeasonalTrend.find(([s]) => s === hoveredSeason)?.[1];
                 if (!seasonData) return null;
                 return (
                   <div className="p-6 space-y-4">

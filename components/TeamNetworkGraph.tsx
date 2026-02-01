@@ -295,14 +295,12 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
                 <circle cx={node.x} cy={node.y} r="38" fill="white" stroke={isHovered ? "#2D4F2D" : "#E5E1DD"} strokeWidth={isHovered ? "2" : "1"} filter="url(#teamShadow)" />
                 <image href={node.image} x={node.x - 35} y={node.y - 35} width="70" height="70" clipPath={`url(#clip-${node.id})`} preserveAspectRatio="xMidYMid slice" className="grayscale-[40%] hover:grayscale-0 transition-all duration-300" />
                 
-                {isHovered && (
-                  <g className="animate-in fade-in duration-300">
-                    <rect x={node.x - 60} y={node.y + 45} width="120" height="20" rx="10" fill="white" fillOpacity="0.9" stroke="#E5E1DD" strokeWidth="0.5" />
-                    <text x={node.x} y={node.y + 58} textAnchor="middle" className="text-[8px] uppercase tracking-[0.2em] font-black fill-[#1A1A1A]">
-                      {node.name}
-                    </text>
-                  </g>
-                )}
+                <g className={`animate-in fade-in duration-300 ${isHovered ? '' : 'opacity-70'}`}>
+                  <rect x={node.x - 60} y={node.y + 45} width="120" height="20" rx="10" fill="white" fillOpacity="0.95" stroke="#E5E1DD" strokeWidth="0.5" />
+                  <text x={node.x} y={node.y + 58} textAnchor="middle" className="text-[8px] uppercase tracking-[0.2em] font-black fill-[#1A1A1A]">
+                    {node.name}
+                  </text>
+                </g>
               </g>
             );
           })}

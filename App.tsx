@@ -12,6 +12,7 @@ import TeamNetwork from './components/TeamNetwork.tsx';
 import MahiExchange from './components/MahiExchange.tsx';
 import EventsDashboard from './components/EventsDashboard.tsx';
 import ImpactChatbot from './components/ImpactChatbot.tsx';
+import SystemsFlow from './components/SystemsFlow.tsx';
 
 const DOMAIN_BACKGROUNDS: Record<DomainType, string> = {
   Earth: 'https://cdn.shopify.com/s/files/1/0674/5469/7761/files/Tree_Planting.jpg?v=1754355799',
@@ -151,7 +152,7 @@ const App: React.FC = () => {
       {/* Domain Context Block with Dynamic Background */}
       <header 
         data-reveal
-        className="relative pt-44 pb-20 px-6 transition-all duration-700 overflow-hidden text-white"
+        className="relative pt-36 pb-16 px-6 transition-all duration-700 overflow-hidden text-white"
         style={{
           backgroundImage: `url("${DOMAIN_BACKGROUNDS[activeDomain]}")`,
           backgroundSize: 'cover',
@@ -189,7 +190,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Impact Snapshot Dashboard */}
-      <section data-reveal className="bg-[#FAFAF9] border-y border-[#E5E1DD] py-20 px-6">
+      <section data-reveal className="bg-[#FAFAF9] border-y border-[#E5E1DD] py-16 px-6">
         <div className="max-w-screen-xl mx-auto space-y-12">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <h2 className="text-sm uppercase tracking-[0.2em] font-bold text-[#2D4F2D]">Impact Snapshot</h2>
@@ -217,11 +218,11 @@ const App: React.FC = () => {
       </section>
 
       {/* Main Content Explorer & Evidence Layer */}
-      <main className="max-w-screen-xl mx-auto px-6 py-32 space-y-40">
+      <main className="max-w-screen-xl mx-auto px-6 py-24 space-y-32">
         
         {/* People Domain: Team Network + Mahi Exchange Section */}
         {activeDomain === 'People' && (
-          <div className="space-y-40">
+          <div className="space-y-32">
             <section data-reveal className="space-y-16">
               <div className="space-y-4 max-w-2xl">
                 <h2 className="font-serif text-5xl tracking-tight leading-tight">Team Network</h2>
@@ -233,15 +234,21 @@ const App: React.FC = () => {
             </section>
             
             {/* Mahi Exchange Programme */}
-            <section data-reveal className="space-y-16 py-20 border-t border-[#E5E1DD]">
+            <section data-reveal className="space-y-16 py-16 border-t border-[#E5E1DD]">
               <MahiExchange />
             </section>
             
             {/* Events Dashboard */}
-            <section data-reveal className="space-y-16 py-20 border-t border-[#E5E1DD]">
+            <section data-reveal className="space-y-16 py-16 border-t border-[#E5E1DD]">
               <EventsDashboard />
             </section>
           </div>
+        )}
+
+        {activeDomain === 'Systems' && (
+          <section className="space-y-16">
+            <SystemsFlow />
+          </section>
         )}
 
         {/* Network Specific Page */}
@@ -255,7 +262,7 @@ const App: React.FC = () => {
 
         {/* Earth Data Explorer */}
         {activeDomain === 'Earth' && (
-          <div className="space-y-40">
+          <div className="space-y-32">
             <PredatorFree />
             
             {/* Hyperboard Section */}
@@ -328,7 +335,7 @@ const App: React.FC = () => {
         )}
 
         {/* Stories & Human Witness Gallery */}
-        {activeDomain !== 'Network' && (
+        {activeDomain !== 'Network' && activeDomain !== 'Systems' && (
           <section data-reveal className="space-y-16">
             <div className="flex items-end justify-between border-b border-[#E5E1DD] pb-10">
               <div className="space-y-3">
@@ -361,7 +368,7 @@ const App: React.FC = () => {
         )}
 
         {/* Reflection & Continuity */}
-        <footer data-reveal className="max-w-2xl py-20 border-t border-[#E5E1DD] space-y-6">
+        <footer data-reveal className="max-w-2xl py-16 border-t border-[#E5E1DD] space-y-6">
           <h2 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Learning & Continuity</h2>
           <p className="font-serif text-2xl font-light text-[#555] italic leading-relaxed">
             Our work in the {activeDomain} domain is iterative. We listen to what the metrics tell us, but we allow the lived experience of our community and the land to guide our next adaptive cycle.
@@ -372,7 +379,7 @@ const App: React.FC = () => {
       <ImpactChatbot activeDomain={activeDomain} />
 
       {/* Footer Branding */}
-      <footer data-reveal className="bg-white border-t border-[#E5E1DD] py-32 px-6">
+      <footer data-reveal className="bg-white border-t border-[#E5E1DD] py-24 px-6">
         <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-end gap-20">
           <div className="space-y-8">
             <h3 className="font-serif text-6xl md:text-8xl tracking-tighter text-[#1A1A1A]">Ngā Mihi.</h3>

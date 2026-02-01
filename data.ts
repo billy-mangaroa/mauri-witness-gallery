@@ -1,5 +1,5 @@
 
-import { EarthRecord, WitnessRecord, Organisation, DomainType, EventRecord } from './types.ts';
+import { EarthRecord, WitnessRecord, Organisation, DomainType, EventRecord, TeamMember } from './types.ts';
 import { THEME_DOMAIN_MAP } from './constants.ts';
 
 // Vite environment variables (import.meta.env)
@@ -18,6 +18,7 @@ const AIRTABLE_BASE_ID = getEnv('VITE_AIRTABLE_BASE_ID', 'appbvU8D6GmB51fIz');
 const AIRTABLE_TABLE_NAME = getEnv('VITE_AIRTABLE_TABLE_NAME', 'Impact Reporting');
 const AIRTABLE_ORGS_TABLE = 'Organisations';
 const AIRTABLE_VIEW_NAME = getEnv('VITE_AIRTABLE_VIEW_NAME', '');
+const AIRTABLE_TEAM_TABLE = getEnv('VITE_AIRTABLE_TEAM_TABLE', 'Team');
 
 export async function fetchWitnessRecords(): Promise<WitnessRecord[]> {
   let allRecords: any[] = [];
@@ -136,6 +137,62 @@ export async function fetchOrganisations(): Promise<Organisation[]> {
     });
   } catch (error) {
     console.error("Failed to load organisations from Airtable:", error);
+    return [];
+  }
+}
+
+const mapTeamPod = (value?: string): TeamMember['pod'] => {
+  const normalized = (value || '').toLowerCase();
+  if (normalized.includes('land')) return 'Land';
+  if (normalized.includes('community')) return 'Community';
+  if (normalized.includes('education') || normalized.includes('research')) return 'Education';
+  if (normalized.includes('story') || normalized.includes('media')) return 'Story';
+  if (normalized.includes('steward') || normalized.includes('governance') || normalized.includes('ops')) return 'Stewardship';
+  return 'Stewardship';
+};
+
+export async function fetchTeamMembers(): Promise<TeamMember[]> {
+  let allRecords: any[] = [];
+  let offset = '';
+
+  try {
+    do {
+      const url = new URL(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TEAM_TABLE)}`);
+      if (offset) url.searchParams.append('offset', offset);
+      url.searchParams.append('pageSize', '100');
+
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}` }
+      });
+
+      if (!response.ok) throw new Error(`Airtable Team Fetch Failed: ${response.status}`);
+
+      const data = await response.json();
+      allRecords = [...allRecords, ...(data.records || [])];
+      offset = data.offset;
+    } while (offset);
+
+    return allRecords.map((record): TeamMember => {
+      const fields = record.fields || {};
+      const name = fields.name || fields.Name || 'Team Member';
+      const role = fields.role || fields.Role || 'Team';
+      const department = fields.department || fields.Department || fields.pod || fields.Pod;
+      const imageAttachment = Array.isArray(fields.image)
+        ? fields.image[0]
+        : Array.isArray(fields.Image)
+          ? fields.Image[0]
+          : null;
+
+      return {
+        id: record.id,
+        name,
+        role,
+        pod: mapTeamPod(department),
+        image: imageAttachment?.url || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400&auto=format&fit=crop'
+      };
+    });
+  } catch (error) {
+    console.error('Failed to load team from Airtable:', error);
     return [];
   }
 }
