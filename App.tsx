@@ -10,6 +10,8 @@ import NavigatorX from './components/NavigatorX.tsx';
 import Network from './components/Network.tsx';
 import TeamNetwork from './components/TeamNetwork.tsx';
 import MahiExchange from './components/MahiExchange.tsx';
+import EventsDashboard from './components/EventsDashboard.tsx';
+import ImpactChatbot from './components/ImpactChatbot.tsx';
 
 const DOMAIN_BACKGROUNDS: Record<DomainType, string> = {
   Earth: 'https://cdn.shopify.com/s/files/1/0674/5469/7761/files/Tree_Planting.jpg?v=1754355799',
@@ -46,6 +48,60 @@ const App: React.FC = () => {
     loadData();
   }, []);
 
+  useEffect(() => {
+    const title = `${activeDomain} | Mangaroa Impact`;
+    const narrative = DOMAIN_NARRATIVES[activeDomain];
+    const description = narrative
+      ? `${narrative.subheading} ${narrative.intro[0]}`
+      : 'Mangaroa Impact reporting gallery highlighting ecological restoration, community programmes, and partner networks across the Mangaroa Valley.';
+
+    document.title = title;
+
+    const setMeta = (selector: string, value: string) => {
+      const element = document.querySelector(selector);
+      if (element) {
+        element.setAttribute('content', value);
+      }
+    };
+
+    setMeta('#meta-description', description);
+    setMeta('#meta-og-title', title);
+    setMeta('#meta-og-description', description);
+    setMeta('#meta-og-url', window.location.href);
+    setMeta('#meta-twitter-title', title);
+    setMeta('#meta-twitter-description', description);
+  }, [activeDomain]);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const elements = Array.from(document.querySelectorAll('[data-reveal]')) as HTMLElement[];
+
+    if (prefersReducedMotion) {
+      elements.forEach(el => {
+        el.classList.add('reveal-on-scroll', 'is-visible');
+      });
+      return;
+    }
+
+    elements.forEach(el => el.classList.add('reveal-on-scroll'));
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.18, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    elements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [activeDomain]);
+
   const filteredRecords = useMemo(() => {
     return records.filter(r => 
       r.domain === activeDomain
@@ -68,6 +124,8 @@ const App: React.FC = () => {
             <img
               src="https://cdn.shopify.com/s/files/1/0674/5469/7761/files/Mangaroa-Black_High_Res_Logo.png?v=1685490985"
               alt="Mangaroa Farms"
+              loading="eager"
+              decoding="async"
               className="h-16 md:h-20 w-auto object-contain"
             />
           </a>
@@ -92,6 +150,7 @@ const App: React.FC = () => {
 
       {/* Domain Context Block with Dynamic Background */}
       <header 
+        data-reveal
         className="relative pt-44 pb-20 px-6 transition-all duration-700 overflow-hidden text-white"
         style={{
           backgroundImage: `url("${DOMAIN_BACKGROUNDS[activeDomain]}")`,
@@ -130,7 +189,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Impact Snapshot Dashboard */}
-      <section className="bg-[#FAFAF9] border-y border-[#E5E1DD] py-20 px-6">
+      <section data-reveal className="bg-[#FAFAF9] border-y border-[#E5E1DD] py-20 px-6">
         <div className="max-w-screen-xl mx-auto space-y-12">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <h2 className="text-sm uppercase tracking-[0.2em] font-bold text-[#2D4F2D]">Impact Snapshot</h2>
@@ -163,7 +222,7 @@ const App: React.FC = () => {
         {/* People Domain: Team Network + Mahi Exchange Section */}
         {activeDomain === 'People' && (
           <div className="space-y-40">
-            <section className="space-y-16">
+            <section data-reveal className="space-y-16">
               <div className="space-y-4 max-w-2xl">
                 <h2 className="font-serif text-5xl tracking-tight leading-tight">Team Network</h2>
                 <p className="text-[11px] uppercase tracking-[0.4em] font-bold opacity-40">
@@ -174,8 +233,13 @@ const App: React.FC = () => {
             </section>
             
             {/* Mahi Exchange Programme */}
-            <section className="space-y-16 py-20 border-t border-[#E5E1DD]">
+            <section data-reveal className="space-y-16 py-20 border-t border-[#E5E1DD]">
               <MahiExchange />
+            </section>
+            
+            {/* Events Dashboard */}
+            <section data-reveal className="space-y-16 py-20 border-t border-[#E5E1DD]">
+              <EventsDashboard />
             </section>
           </div>
         )}
@@ -195,7 +259,7 @@ const App: React.FC = () => {
             <PredatorFree />
             
             {/* Hyperboard Section */}
-            <section className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-start">
+            <section data-reveal className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-start">
               <div className="lg:col-span-1 space-y-8">
                 <div className="space-y-4">
                   <h2 className="font-serif text-5xl tracking-tight leading-tight">Shared Stewardship</h2>
@@ -233,7 +297,7 @@ const App: React.FC = () => {
             </section>
 
             {/* Navigator X Section */}
-            <section className="space-y-16">
+            <section data-reveal className="space-y-16">
               <div className="max-w-3xl space-y-8">
                 <div className="space-y-4">
                   <h2 className="font-serif text-5xl tracking-tight leading-tight">Navigator X: Reconstruction Priorities</h2>
@@ -265,7 +329,7 @@ const App: React.FC = () => {
 
         {/* Stories & Human Witness Gallery */}
         {activeDomain !== 'Network' && (
-          <section className="space-y-16">
+          <section data-reveal className="space-y-16">
             <div className="flex items-end justify-between border-b border-[#E5E1DD] pb-10">
               <div className="space-y-3">
                 <h2 className="font-serif text-5xl tracking-tight">Voices of {activeDomain}</h2>
@@ -297,7 +361,7 @@ const App: React.FC = () => {
         )}
 
         {/* Reflection & Continuity */}
-        <footer className="max-w-2xl py-20 border-t border-[#E5E1DD] space-y-6">
+        <footer data-reveal className="max-w-2xl py-20 border-t border-[#E5E1DD] space-y-6">
           <h2 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30">Learning & Continuity</h2>
           <p className="font-serif text-2xl font-light text-[#555] italic leading-relaxed">
             Our work in the {activeDomain} domain is iterative. We listen to what the metrics tell us, but we allow the lived experience of our community and the land to guide our next adaptive cycle.
@@ -305,8 +369,10 @@ const App: React.FC = () => {
         </footer>
       </main>
 
+      <ImpactChatbot activeDomain={activeDomain} />
+
       {/* Footer Branding */}
-      <footer className="bg-white border-t border-[#E5E1DD] py-32 px-6">
+      <footer data-reveal className="bg-white border-t border-[#E5E1DD] py-32 px-6">
         <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-end gap-20">
           <div className="space-y-8">
             <h3 className="font-serif text-6xl md:text-8xl tracking-tighter text-[#1A1A1A]">Ngā Mihi.</h3>

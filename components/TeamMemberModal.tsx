@@ -32,6 +32,9 @@ const TeamMemberModal: React.FC<TeamMemberModalProps> = ({ member, onClose }) =>
             <img 
               src={member.image} 
               alt={member.name} 
+              loading="lazy"
+              decoding="async"
+              sizes="(min-width: 768px) 50vw, 100vw"
               className="w-full h-full object-cover grayscale-[20%]"
             />
           </div>

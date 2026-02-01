@@ -47,7 +47,7 @@ const PREDATOR_INFO: Record<string, PredatorMeta> = {
 const PredatorFree: React.FC = () => {
   const allRecords = useMemo(() => parseEarthData(), []);
   
-  const [minYear, setMinYear] = useState(2022);
+  const [minYear, setMinYear] = useState(2019);
   const [maxYear, setMaxYear] = useState(2025);
   const [hoveredSpecies, setHoveredSpecies] = useState<string | null>(null);
   const [hoveredSeason, setHoveredSeason] = useState<string | null>(null);
@@ -107,12 +107,12 @@ const PredatorFree: React.FC = () => {
   }, [filteredRecords]);
 
   const resetFilters = () => {
-    setMinYear(2022);
+    setMinYear(2019);
     setMaxYear(2025);
   };
 
   return (
-    <div className="space-y-16 py-20">
+    <div data-reveal className="space-y-16 py-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className="space-y-8">
           <div className="space-y-4">
@@ -122,18 +122,24 @@ const PredatorFree: React.FC = () => {
           <p className="font-serif text-2xl text-[#555] leading-relaxed italic">
             "We are working towards a valley where native birdsong is the dominant sound, and our forests can regenerate without the heavy pressure of invasive browsers."
           </p>
+          <div className="bg-[#2D4F2D] text-white p-6 rounded-2xl max-w-lg space-y-2">
+            <p className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-60">The Challenge</p>
+            <p className="text-lg leading-relaxed">
+              Every night in Aotearoa, around <span className="font-bold text-[#E9C46A]">68,000 native birds</span> are killed by introduced predators — more than <span className="font-bold text-[#E9C46A]">25 million every year</span>.
+            </p>
+          </div>
           <div className="text-sm leading-relaxed text-[#666] max-w-lg">
             Our predator control program is a cornerstone of the Mangaroa regeneration project. By combining traditional field skills with modern data tracking, we are creating a sanctuary for our unique New Zealand biodiversity to return and thrive.
           </div>
         </div>
-        <div className="rounded-2xl overflow-hidden aspect-video shadow-2xl">
+        <div className="rounded-2xl overflow-hidden aspect-[4/3] shadow-2xl">
           <img 
-            src="https://cdn.shopify.com/s/files/1/0674/5469/7761/files/Trapping_Landscape.jpg?v=1712345678" 
+            src="https://mangaroa-impact-site.b-cdn.net/Screenshot%202026-01-30%20at%202.50.57%E2%80%AFPM.png" 
             alt="Mangaroa Trapping" 
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop";
-            }}
+            loading="lazy"
+            decoding="async"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="w-full h-full object-cover object-[center_30%]"
           />
         </div>
       </div>
@@ -158,7 +164,7 @@ const PredatorFree: React.FC = () => {
             
             {/* Year nodes */}
             <div className="relative flex justify-between items-center">
-              {[2022, 2023, 2024, 2025].map((year) => {
+              {[2019, 2020, 2021, 2022, 2023, 2024, 2025].map((year) => {
                 const isInRange = year >= minYear && year <= maxYear;
                 
                 return (
@@ -366,7 +372,9 @@ const PredatorFree: React.FC = () => {
                 `}
               >
                 <div className="flex flex-col gap-3">
-                  <span className="text-xs uppercase tracking-widest font-bold text-[#333]">{group}</span>
+                  <span className="text-xs uppercase tracking-widest font-bold text-[#333]">
+                    {group}{group === 'Large Browser' && <span className="opacity-50"> (DEER, GOATS, PIGS)</span>}
+                  </span>
                   <div className="h-2 bg-[#E5E1DD]/40 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-[#2D4F2D] transition-all duration-1000"
@@ -388,6 +396,9 @@ const PredatorFree: React.FC = () => {
                 <img 
                   src={PREDATOR_INFO[hoveredSpecies].image} 
                   alt={hoveredSpecies} 
+                  loading="lazy"
+                  decoding="async"
+                  sizes="320px"
                   className="w-full h-full object-cover transition-transform duration-700 ease-out scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />

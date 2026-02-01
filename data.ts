@@ -1,5 +1,5 @@
 
-import { EarthRecord, WitnessRecord, Organisation, DomainType } from './types.ts';
+import { EarthRecord, WitnessRecord, Organisation, DomainType, EventRecord } from './types.ts';
 import { THEME_DOMAIN_MAP } from './constants.ts';
 
 // Vite environment variables (import.meta.env)
@@ -143,6 +143,67 @@ export async function fetchOrganisations(): Promise<Organisation[]> {
 export async function getRecordsForDomain(domain: DomainType): Promise<WitnessRecord[]> {
   const all = await fetchWitnessRecords();
   return all.filter(r => r.domain === domain);
+}
+
+const AIRTABLE_EVENTS_TABLE = 'Events';
+
+export async function fetchEvents(): Promise<EventRecord[]> {
+  let allRecords: any[] = [];
+  let offset = '';
+  
+  try {
+    do {
+      const url = new URL(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_EVENTS_TABLE)}`);
+      if (offset) url.searchParams.append('offset', offset);
+      url.searchParams.append('pageSize', '100');
+
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}` }
+      });
+
+      if (!response.ok) {
+        let errorDetail = '';
+        try {
+          const errorJson = await response.json();
+          errorDetail = ` - ${errorJson.error?.message || JSON.stringify(errorJson.error)}`;
+        } catch {
+          errorDetail = ` - ${response.statusText || 'Unknown Error'}`;
+        }
+        throw new Error(`Airtable Events Fetch Failed: ${response.status}${errorDetail}`);
+      }
+
+      const data = await response.json();
+      allRecords = [...allRecords, ...(data.records || [])];
+      offset = data.offset;
+    } while (offset);
+
+    return allRecords.map((record): EventRecord => {
+      const fields = record.fields;
+      const eventDate = fields.event_date || fields.Date || fields.date;
+      const year = eventDate ? new Date(eventDate).getFullYear() : new Date().getFullYear();
+      
+      return {
+        id: record.id,
+        event_name: fields.event_name || fields.Name || fields.name || 'Untitled Event',
+        event_date: eventDate || record.createdTime,
+        end_date: fields.end_date || fields.End_Date,
+        event_type: fields.event_type || fields.Type || fields.type || 'Community',
+        description: fields.description || fields.Description || fields.notes,
+        attendees: fields.attendees || fields.Attendees || fields.attendance,
+        location: fields.location || fields.Location,
+        photos: fields.photos || fields.Photos || fields.Images || [],
+        highlight: fields.highlight || fields.Highlight || fields.featured || false,
+        partners: fields.partners || fields.Partners || [],
+        impact_notes: fields.impact_notes || fields.Impact_Notes,
+        year
+      };
+    })
+    .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime());
+
+  } catch (error) {
+    console.error("Failed to load events from Airtable:", error);
+    return [];
+  }
 }
 
 export const PEST_CSV_DATA = {
@@ -500,7 +561,9 @@ export const PEST_CSV_DATA = {
 13/4/22,1 x Rat,I,Doc200
 26/4/22,1 x Possum,K,Possum Master
 26/4/22,1 x Rat,K,Doc200
-15/4/22,5 x Deer 1 Pig 1 Goat,Farm2,Shot
+15/4/22,5 x Deer,Farm2,Shot
+15/4/22,1 x Pig,Farm2,Shot
+15/4/22,1 x Goat,Farm2,Shot
 3/5/22,1 x Possum,K,Possum Master
 3/5/22,2 x Rats,K,Doc200
 3/5/22,1 x Rat,B,Doc200
@@ -518,11 +581,274 @@ export const PEST_CSV_DATA = {
 25/5/22,1 x Stoat,K,Doc200
 27/5/22,1 x Rat,K,Doc200
 27/5/22,1 x Rat,F,Bait Station
-22/5/22,2 Deer 1Pig,Farm2,Shot
+22/5/22,2 Deer,Farm2,Shot
+22/5/22,1 Pig,Farm2,Shot
 7/6/22,1 x Possum,K,Possum Master
 7/6/22,2 x Rats,K,Doc200
 8/6/22,1 x Rat,C,Doc200
-10/6/22,1 x Rat,C,Doc200`
+10/6/22,1 x Rat,G,Bait Station
+15/6/22,2 x Rats,C,Doc200
+15/6/22,1 x Possum,C,Possum Master
+21/6/22,1 x Rat,C,Doc200
+22/6/22,1 x Stoat,C,Doc200
+27/6/22,1 x Rat,C,Doc200
+28/6/22,1 x Possum,K,Possum Master
+28/6/22,1 x Rat,K,Doc200
+30/6/22,1 x Rat,C,Doc200
+15/6/22,5 x Red deer,Farm2,Shot
+15/6/22,2 Fellow deer,B,Shot
+15/6/22,1 x Red deer,B,Shot
+15/7/22,1 x Rat,K,Doc200
+15/7/22,1 x Rat,I,Doc200
+16/7/22,1 x Fellow deer,B,Shot
+15/7/22,1 x Red deer,B,Shot
+15/7/22,3 x Pigs,K,Shot
+15/7/22,4 x Goats,K,Shot
+15/7/22,1 x Pig,D,Shot
+3/8/22,1 x Stoat,I
+8/8/22,1 x Possum,C
+31/8/22,1 x Rat,K
+21/8/22,6 x Hares,C,Shot
+31/8/22,3 x Rabbits,C,Shot
+31/8/22,2 x Pigs,C,Shot
+5/9/22,1 x Cat,K
+5/9/22,1 x Rat,C
+7/9/22,1 x Rat,K
+9/9/22,1 x Rat,K
+12/9/22,2 x Pigs,K,Shot
+14/9/22,1 x Possum,C
+15/9/22,1 x Possum,C
+17/9/22,1 x Possum,D
+17/9/22,4 x Rabbits,C,Shot
+17/9/22,3 x Rabbits,D,Shot
+29/9/22,1 x Possum,C
+5/10/22,1 x Rat,C
+10/10/22,1 x Possum,C
+20/10/22,1 x Rat,F
+21/10/22,1 x Possum,C
+28/10/22,1 x Rat,K
+28/10/22,1 x Possum,K
+29/9/22,4 x Rabbits,D,Shot
+29/9/22,4 x Rabbits,C,Shot
+29/9/22,2 Hares,C,Shot
+8/11/22,1 x Rat,K
+14/11/22,1 x Hedgehog,K
+21/11/22,1 x Rat,C
+21/11/22,1 x Rat,F
+29/11/22,2 Goats,D,Shot
+30/11/22,1 Possum,K
+2/12/22,2 Stoats,K
+6/12/22,1 Stoat,I
+8/12/22,2 x Rats,I
+12/12/22,1 x Stoat,I
+16/12/22,1 x Rat,D
+18/12/22,1 x Stoat,A
+19/12/22,1 x Stoat,I
+20/12/22,1 x Possum,E
+23/12/22,2 x Hedgehogs,K
+15/12/22,2 Goats,K,Shot
+15/12/22,2 Deer,K,Shot
+15/12/22,6 Rabbits,C,Shot`,
+  fy21: `6/1/21,1 x Rat,B,Doc200
+11/1/21,1 x Possum,K,Possum master
+11/1/21,2 x Rats,C,Doc200
+13/1/21,1 x Hedgehog,C,Doc200
+14/1/21,1 x Hedgehog,C,Doc200
+18/1/21,1 x Rat,C,Doc200
+18/1/21,1 x Hedgehog,I,Doc200
+19/1/21,1 x Hedgehog,A,Doc200
+29/1/21,1 x Rat,B,Doc200
+29/1/21,1 x Possum,H,Possum master
+23/2/21,1 x Rat,C,Doc200
+23/2/21,1 x Possum,K,Possum master
+26/2/21,2 x Possums,K,Possum master
+1/3/21,1 x Rat,C,Victor
+3/3/21,1 x Hedgehog,B,Doc200
+8/3/21,1 x Possum,H,Possum master
+10/3/21,1 x Possum,H,Possum master
+12/3/21,1 x Hedgehog,H,Doc200
+15/3/21,1 x Possum,H,Possum master
+18/3/21,1 x Rat,Church,Bait Station
+19/3/21,2 x Possums,K,Possum master
+22/3/21,1 x Rat,C,Victor
+24/3/21,1 x Hedgehog,E,Doc200
+29/3/21,1 x Hedgehog,C,Doc200
+30/3/21,1 x Possum,C,Possum master
+30/3/21,1 x Hedgehog,E,Doc200
+30/3/21,1 x Possum,H,Possum master
+6/4/21,1 x Possum,C,Possum master
+8/4/21,1 x Rat,H,Doc200
+16/4/21,1 x Hedgehog,K,Doc200
+16/4/21,1 x Hedgehog,E,Doc200
+20/4/21,1 x Rat,H,Doc200
+20/4/21,1 x Rat,C,Victor
+20/4/21,1 x Possum,C,Possum master
+23/4/21,1 x Rat,C,Victor
+23/4/21,1 x Hedgehog,H,Doc200
+23/4/21,1 x Stoat,H,Doc200
+28/4/21,1 x Rat,H,Doc200
+30/4/21,1 x Possum,C,Doc200
+6/5/21,1 x Possum,C,Doc200
+7/5/21,1 x Rat,E,Bait Station
+7/5/21,1 x Possum,C,Possum master
+12/5/21,1 x Hedgehog,A,Doc200
+15/5/21,1 x Possum,C,Possum master
+24/5/21,1 x Rat,I,Victor
+27/5/21,2 x Possums,C,Possum master
+31/5/21,1 x Possum,B,Possum master
+31/5/21,1 x Stoat,B,Doc200
+3/6/21,1 x Possum,E,Possum master
+4/6/21,1 x Possum,C,Possum master
+4/6/21,1 x Possum,E,Possum master
+9/6/21,2 x Possums,E,Possum master
+10/6/21,1 x Rat,C,Doc200
+10/6/21,1 x Possum,E,Possum master
+11/6/21,1 x Possum,C,Possum master
+11/6/21,1 x Rat,C,Doc200
+11/6/21,1 x Possum,E,Possum master
+16/6/21,2 x Possums,E,Possum master
+1/7/21,1 x Possum,C,Possum master
+21/7/21,1 x Possum,C,Possum master
+12/8/21,2 x Rats,B,Doc200
+12/8/21,1 x Hedgehog,B,Doc200
+9/9/21,3 x Rats,B,Doc200
+12/9/21,1 x Possum,E,Possum master
+21/9/21,4 x Goats,E,Shot
+24/9/21,3 x Rats,B,Doc200
+27/9/21,1 x Possum,C,Possum master
+27/9/21,1 x Rat,B,Doc200
+8/10/21,1 x Possum,C,Possum master
+1/11/21,1 x Possum,D,Possum master
+15/11/21,1 x Rat,C,Possum master
+24/11/21,1 x Stoat,E,Doc200
+24/11/21,1 x Stoat,B,Doc200
+29/11/21,1 x Possum,E,Possum master
+8/12/21,1 x Possum,D,Possum master
+9/12/21,1 x Possum,C,Possum master
+17/12/21,1 x stoat,I,Doc200
+20/12/21,1 x Stoat,I,Doc200
+24/12/21,1 x Possum,C,Possum master
+15/6/21,9 x Red deer,B,Shot
+15/6/21,8 Fellow deer,B,Shot
+15/6/21,4 x Red deer,E,Shot
+15/6/21,46 x Rabbits,C,Shot
+15/6/21,17 x Hares,C,Shot`,
+  fy20: `6/1/20,1 x Rat,A,Doc200
+9/1/20,3 x Hares,B,Shot
+9/1/20,12 x Rabbits,A,Shot
+27/1/20,1 x Hedgehog,C,Doc200
+30/1/20,3 x Rabbits,C,Shot
+3/2/20,1 x Hedgehog,C,Doc200
+4/2/20,1 x Hedgehog,A,Doc200
+13/2/20,2 x Rats,I,Bait Station
+13/2/20,4 x Rabbits,B,Shot
+19/2/20,1 x Rat,C,Victor
+25/2/20,1 x Rat,C,Victor
+25/2/20,2 x Hedgehogs,A,Doc200
+27/2/20,1 x Hedgehog,A,Doc200
+3/3/20,1 x Rat,G,Victor
+3/3/20,1 x Hedgehog,A,Doc200
+13/3/20,1 x Hedgehog,F,Doc200
+8/4/20,1 x Rat,I,Victor
+11/4/20,1 x Rat,I,Victor
+12/4/20,2 x Rats,I,Victor
+21/4/20,1 x Rat,I,Victor
+22/4/20,1 x Rat,I,Doc200
+23/4/20,1 x Rat,I,Victor
+28/4/20,2 x Rats,I,Doc200
+4/5/20,1 x Rat,D,Doc200
+8/5/20,1 x Rat,I,Doc200
+12/5/20,2 x Rats,C,Bait Station
+13/5/20,1 x Possum,C,Possum Master
+18/5/20,1 x Rat,C,Victor
+20/5/20,1 x Rat,B,Doc200
+20/5/20,1 x Stoat,B,Doc200
+21/5/20,1 x Possum,C,Possum Master
+8/6/20,1 x Possum,C,Possum Master
+30/6/20,1 x Rat,I,Doc200
+30/7/20,1 x Rat,C,Doc200
+3/8/20,1 x Rat,I,Doc200
+17/8/20,1 x Rat,G,Victor
+20/8/20,1 x Rat,C,Doc200
+24/8/20,1 x Possum,C,Possum Master
+25/8/20,1 x Possum,C,Possum Master
+1/9/20,2 x Possums,C,Possum Master
+11/9/20,1 x Possum,D,Possum Master
+10/10/20,1 x Weasel,E,Doc200
+10/10/20,1 x Hedgehog,E,Doc200
+20/10/20,1 x Hedgehog,I,Doc200
+23/10/20,1 x Rat,C,Doc200
+6/11/20,1 x Rat,A,Doc200
+12/11/20,1 x Rat,C,Victor
+2/12/20,1 x Weasel,F,Doc200
+11/12/20,1 x Stoat,A,Doc200
+14/12/20,1 x Weasel,F,Doc200
+18/12/20,1 x Stoat,A,Doc200
+18/12/20,1 x Weasel,F,Doc200
+29/12/20,1 x Rat,A,Doc200
+29/12/20,1 x Rat,B,Doc200
+15/6/20,3 x Red deer,B,Shot
+15/12/20,21 x Rabbits,C,Shot`,
+  fy19: `19/8/19,1 x Possum,E,Timms Trap
+21/8/19,1 x Possum,C,Timms Trap
+21/8/19,1 x Rat,C,Doc200
+23/8/19,1 x Possum,B,Possum Master
+23/8/19,1 x Possum,A,Possum Master
+26/8/19,5 x Possums,B,Possum Master
+27/8/19,4 x Possums,B,Possum Master
+28/8/19,5 x Possums,B,Possum Master
+28/8/19,1 x Rat,A,Doc200
+30/8/19,3 x Possums,B,Possum Master
+2/9/19,1 x Possum,G,Possum Master
+3/9/19,1 x Possum,B,Possum Master
+4/9/19,1 x Rat,A,Victor
+4/9/19,1 x Possum,B,Possum Master
+5/9/19,2 x Possums,B,Possum Master
+5/9/19,1 x Rat,I,Bait Station
+6/9/19,1 x Possum,B,Possum Master
+6/9/19,3 x Hares,A,Shot
+6/9/19,2 x Rats,A,Victor
+9/9/19,2 x Possums,B,Possum Master
+10/9/19,1 x Possum,B,Possum Master
+10/9/19,1 x Rat,B,Victor
+11/9/19,2 x Possums,B,Possum Master
+13/9/19,1 x Possum,C,Possum Master
+16/9/19,1 x Possum,B,Possum Master
+16/9/19,2 x Possums,C,Possum Master
+18/9/19,1 x Rat,A,Doc200
+18/9/19,1 x Possum,A,Possum Master
+20/9/19,1 x Possum,B,Possum Master
+20/9/19,2 x Possums,C,Possum Master
+27/9/19,1 x Rat,A,Doc200
+27/9/19,1 x Rat,C,Doc200
+1/10/19,3 x Rats,I,Doc200
+2/10/19,1 x Rat,I,Victor
+4/10/19,2 x Rats,I,Doc200
+7/10/19,1 x Possum,I,Doc200
+9/10/19,1 x Hedgehog,C,Doc200
+10/10/19,1 x Hedgehog,C,Doc200
+14/10/19,1 x Hedgehog,C,Doc200
+17/10/19,1 x Hedgehog,C,Doc200
+30/10/19,1 x Rat,D,Victor
+30/10/19,1 x Hedgehog,C,Doc200
+31/10/19,1 x Possum,E,Possum Master
+1/11/19,1 x Possum,E,Possum Master
+8/11/19,1 x Rat,D,Doc200
+15/11/19,1 x Rat,C,Doc200
+19/11/19,1 x Rat,H,Doc200
+20/11/19,2 x Rats,C,Doc200
+21/11/19,1 x Rat,C,Doc200
+22/11/19,2 x Rats,C,Doc200
+25/11/19,1 x Rat,C,Doc200
+25/11/19,1 x Rat,D,Bait Station
+26/11/19,1 x Rat,C,Doc200
+9/12/19,1 x Rat,K,Victor
+10/12/19,1 x Rat,D,Victor
+10/12/19,1 x Rat,C,Doc200
+17/12/19,1 x Rat,B,Doc200
+19/12/19,1 x Weasel,C,Doc200
+23/12/19,1 x Weasel,C,Doc200
+24/12/19,1 x Rat,I,Bait Station`
 };
 
 function getSpeciesGroup(species: string): EarthRecord['speciesGroup'] {

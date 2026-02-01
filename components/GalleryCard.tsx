@@ -10,6 +10,7 @@ interface GalleryCardProps {
 const GalleryCard: React.FC<GalleryCardProps> = ({ record, onClick }) => {
   const [imageError, setImageError] = useState(false);
   const displayTitle = record.activity_title || 'Witness Record';
+  const witnessLabel = record.witness_names || 'Community witness';
 
   return (
     <div 
@@ -21,6 +22,9 @@ const GalleryCard: React.FC<GalleryCardProps> = ({ record, onClick }) => {
           <img 
             src={record.supporting_media_raw[0].url} 
             alt={displayTitle}
+            loading="lazy"
+            decoding="async"
+            sizes="(min-width: 1280px) 22vw, (min-width: 1024px) 28vw, (min-width: 768px) 45vw, 100vw"
             onError={() => setImageError(true)}
             className="w-full h-full object-cover grayscale-[40%] group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
           />
@@ -44,7 +48,7 @@ const GalleryCard: React.FC<GalleryCardProps> = ({ record, onClick }) => {
             {displayTitle}
           </h3>
           <h4 className="flex items-center gap-2 text-[8px] uppercase tracking-[0.2em] font-bold opacity-30">
-            <span>{record.witness_names}</span>
+            <span>{witnessLabel}</span>
             <span className="w-1 h-1 bg-[#2D4F2D] rounded-full" />
             <span>{new Date(record.date_added).toLocaleDateString('en-NZ', { month: 'long', year: 'numeric' })}</span>
           </h4>

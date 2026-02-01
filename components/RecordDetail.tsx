@@ -15,6 +15,9 @@ const RecordDetail: React.FC<RecordDetailProps> = ({ record, onClose }) => {
     };
   }, []);
 
+  const displayTitle = record.activity_title || 'Witness Record';
+  const witnessLabel = record.witness_names || 'Community witness';
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-8 lg:p-12 animate-in fade-in duration-500">
       <div className="absolute inset-0 bg-[#FDFCFB]/98 backdrop-blur-md" onClick={onClose} />
@@ -35,7 +38,15 @@ const RecordDetail: React.FC<RecordDetailProps> = ({ record, onClose }) => {
           {record.supporting_media_raw && record.supporting_media_raw.length > 0 ? (
             <div className="flex flex-col">
               {record.supporting_media_raw.map((file, i) => (
-                <img key={i} src={file.url} alt="" className="w-full h-auto border-b border-[#E5E1DD] last:border-b-0 grayscale-[20%] hover:grayscale-0 transition-all duration-700" />
+                <img
+                  key={i}
+                  src={file.url}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="w-full h-auto border-b border-[#E5E1DD] last:border-b-0 grayscale-[20%] hover:grayscale-0 transition-all duration-700"
+                />
               ))}
             </div>
           ) : (
@@ -56,11 +67,11 @@ const RecordDetail: React.FC<RecordDetailProps> = ({ record, onClose }) => {
             </div>
             
             <h3 className="font-serif text-5xl md:text-8xl tracking-tighter leading-[0.9]">
-              {record.activity_title}
+              {displayTitle}
             </h3>
 
             <h4 className="flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] font-bold opacity-40">
-               <span>Witnessed by {record.witness_names}</span>
+               <span>Witnessed by {witnessLabel}</span>
                <span className="w-1.5 h-1.5 bg-[#2D4F2D] rounded-full" />
                <span>{new Date(record.date_added).toLocaleDateString('en-NZ', { month: 'long', year: 'numeric' })}</span>
             </h4>

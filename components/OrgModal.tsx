@@ -35,7 +35,14 @@ const OrgModal: React.FC<OrgModalProps> = ({ org, witnessRecords, onClose, onPro
           <header className="flex flex-col md:flex-row gap-12 items-start">
             <div className="w-32 h-32 md:w-48 md:h-48 rounded-[32px] overflow-hidden border border-[#E5E1DD] bg-[#F9F8F6] flex-shrink-0 shadow-sm">
               {org.logo ? (
-                <img src={org.logo.url} alt={org.org_name} className="w-full h-full object-contain p-4" />
+                <img
+                  src={org.logo.url}
+                  alt={org.org_name}
+                  loading="lazy"
+                  decoding="async"
+                  sizes="192px"
+                  className="w-full h-full object-contain p-4"
+                />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-3xl font-black opacity-10">
                   {org.org_name[0]}

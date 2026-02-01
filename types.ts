@@ -88,3 +88,19 @@ export interface EarthRecord {
   method: string;
   speciesGroup: 'Possum' | 'Rat/Stoat' | 'Large Browser' | 'Other';
 }
+
+export interface EventRecord {
+  id: string;
+  event_name: string;
+  event_date: string;
+  end_date?: string;
+  event_type: string;
+  description?: string;
+  attendees?: number;
+  location?: string;
+  photos?: AirtableAttachment[];
+  highlight?: boolean;
+  partners?: string[];
+  impact_notes?: string;
+  year: number;
+}

@@ -37,7 +37,7 @@ const TeamNetwork: React.FC = () => {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   return (
-    <div className="relative w-full h-[75vh] min-h-[600px] bg-[#FDFCFB] rounded-[48px] border border-[#E5E1DD] shadow-inner overflow-hidden">
+    <div data-reveal className="relative w-full h-[75vh] min-h-[600px] bg-[#FDFCFB] rounded-[48px] border border-[#E5E1DD] shadow-inner overflow-hidden">
       <TeamNetworkGraph 
         members={TEAM_DATA} 
         onMemberClick={setSelectedMember} 

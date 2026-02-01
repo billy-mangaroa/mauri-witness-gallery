@@ -110,7 +110,7 @@ const MahiExchange: React.FC = () => {
   const maxHours = Math.max(...WORK_HOURS.map(w => w.hours));
 
   return (
-    <div className="space-y-16">
+    <div data-reveal className="space-y-16">
       {/* Hero Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className="space-y-8">

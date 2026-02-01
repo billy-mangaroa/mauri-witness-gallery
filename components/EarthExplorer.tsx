@@ -40,7 +40,7 @@ const EarthExplorer: React.FC = () => {
   };
 
   return (
-    <div className="space-y-16 py-20 border-b border-[#E5E1DD]">
+    <div data-reveal className="space-y-16 py-20 border-b border-[#E5E1DD]">
       <div className="space-y-4">
         <h2 className="font-serif text-4xl md:text-5xl tracking-tight">Earth Data Explorer</h2>
         <h3 className="text-[11px] uppercase tracking-[0.4em] font-bold opacity-30">

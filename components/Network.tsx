@@ -15,7 +15,7 @@ const Network: React.FC<NetworkProps> = ({ organisations, witnessRecords, onProj
   const [selectedOrg, setSelectedOrg] = useState<Organisation | null>(null);
 
   return (
-    <div className="space-y-12">
+    <div data-reveal className="space-y-12">
       <div className="flex flex-col md:flex-row justify-between items-start gap-8">
         <div className="space-y-4 max-w-2xl">
           <h2 className="font-serif text-5xl tracking-tight leading-tight">Collective Ecosystem</h2>

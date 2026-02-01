@@ -5,6 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mauri | Mangaroa Impact</title>
+    <meta name="description" id="meta-description" content="Mangaroa Impact reporting gallery highlighting ecological restoration, community programmes, and partner networks across the Mangaroa Valley." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://mangaroa.org" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" id="meta-og-title" content="Mauri | Mangaroa Impact" />
+    <meta property="og:description" id="meta-og-description" content="Explore Mangaroa's living impact: environmental restoration, community programmes, and collaborative networks." />
+    <meta property="og:url" id="meta-og-url" content="https://mangaroa.org" />
+    <meta property="og:image" id="meta-og-image" content="https://cdn.shopify.com/s/files/1/0674/5469/7761/files/Tree_Planting.jpg?v=1754355799" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" id="meta-twitter-title" content="Mauri | Mangaroa Impact" />
+    <meta name="twitter:description" id="meta-twitter-description" content="Explore Mangaroa's living impact across Earth, People, and Network domains." />
+    <meta name="twitter:image" id="meta-twitter-image" content="https://cdn.shopify.com/s/files/1/0674/5469/7761/files/Tree_Planting.jpg?v=1754355799" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,6 +61,69 @@
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #2D4F2D33;
+        }
+
+        .animate-in {
+            animation-duration: 0.8s;
+            animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+            animation-fill-mode: both;
+        }
+        .fade-in {
+            animation-name: fadeIn;
+        }
+        .zoom-in-95 {
+            animation-name: zoomIn95;
+        }
+        .slide-in-from-bottom-8 {
+            animation-name: slideInFromBottom8;
+        }
+        .slide-in-from-left-4 {
+            animation-name: slideInFromLeft4;
+        }
+        .slide-in-from-right-4 {
+            animation-name: slideInFromRight4;
+        }
+
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 700ms ease, transform 700ms ease;
+        }
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .animate-in {
+                animation: none !important;
+            }
+            .reveal-on-scroll {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes zoomIn95 {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideInFromBottom8 {
+            from { opacity: 0; transform: translateY(32px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInFromLeft4 {
+            from { opacity: 0; transform: translateX(-16px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInFromRight4 {
+            from { opacity: 0; transform: translateX(16px); }
+            to { opacity: 1; transform: translateX(0); }
         }
     </style>
 </head>
