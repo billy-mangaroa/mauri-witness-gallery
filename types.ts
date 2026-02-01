@@ -55,6 +55,8 @@ export interface TeamMember {
   role: string;
   pod: 'Land' | 'Community' | 'Education' | 'Story' | 'Stewardship';
   image: string;
+  description?: string;
+  areas?: string[];
 }
 
 export interface Metric {

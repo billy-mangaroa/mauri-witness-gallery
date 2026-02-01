@@ -93,14 +93,44 @@ export async function fetchOrganisations(): Promise<Organisation[]> {
 }
 
 const mapTeamPod = (value?: string | string[]): TeamMember['pod'] => {
-  const firstValue = Array.isArray(value) ? value[0] : value;
-  const normalized = (firstValue || '').toLowerCase();
-  if (normalized.includes('land')) return 'Land';
-  if (normalized.includes('community')) return 'Community';
-  if (normalized.includes('education') || normalized.includes('research')) return 'Education';
-  if (normalized.includes('story') || normalized.includes('media')) return 'Story';
-  if (normalized.includes('steward') || normalized.includes('governance') || normalized.includes('ops')) return 'Stewardship';
+  const values = Array.isArray(value) ? value : value ? [value] : [];
+  const normalized = values.map(item => item.toLowerCase());
+  if (normalized.some(item => item.includes('land'))) return 'Land';
+  if (normalized.some(item => item.includes('community'))) return 'Community';
+  if (normalized.some(item => item.includes('education') || item.includes('research'))) return 'Education';
+  if (normalized.some(item => item.includes('story') || item.includes('media'))) return 'Story';
+  if (normalized.some(item => item.includes('steward') || item.includes('governance') || item.includes('ops'))) return 'Stewardship';
   return 'Stewardship';
+};
+
+const resolveTeamImage = (fields: Record<string, any>): string => {
+  const candidates = [
+    fields.image_url,
+    fields.imageUrl,
+    fields.Image_URL,
+    fields.ImageUrl,
+    fields.photo_url,
+    fields.Photo_URL,
+    fields.headshot_url,
+    fields.Headshot_URL,
+    fields.image,
+    fields.Image,
+    fields.photo,
+    fields.Photo,
+    fields.headshot,
+    fields.Headshot
+  ];
+
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim().length > 0) {
+      return candidate.trim();
+    }
+    if (Array.isArray(candidate) && candidate[0]?.url) {
+      return candidate[0].url;
+    }
+  }
+
+  return 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400&auto=format&fit=crop';
 };
 
 export async function fetchTeamMembers(): Promise<TeamMember[]> {
@@ -114,27 +144,17 @@ export async function fetchTeamMembers(): Promise<TeamMember[]> {
       const fields = record.fields || {};
       const name = fields.name || fields.Name || 'Team Member';
       const role = fields.role || fields.Role || 'Team';
-      const department = fields.department || fields.Department || fields.pod || fields.Pod;
-      const imageAttachment = Array.isArray(fields.image)
-        ? fields.image[0]
-        : Array.isArray(fields.Image)
-          ? fields.Image[0]
-          : Array.isArray(fields.photo)
-            ? fields.photo[0]
-            : Array.isArray(fields.Photo)
-              ? fields.Photo[0]
-              : Array.isArray(fields.headshot)
-                ? fields.headshot[0]
-                : Array.isArray(fields.Headshot)
-                  ? fields.Headshot[0]
-                  : null;
+      const areas = fields.Area || fields.area || fields.Areas || fields.areas || fields.department || fields.Department || fields.pod || fields.Pod;
+      const description = fields.description || fields.Description;
 
       return {
         id: record.id,
         name,
         role,
-        pod: mapTeamPod(department),
-        image: imageAttachment?.url || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400&auto=format&fit=crop'
+        pod: mapTeamPod(areas),
+        image: resolveTeamImage(fields),
+        description,
+        areas: Array.isArray(areas) ? areas : areas ? [areas] : undefined
       };
     });
   } catch (error) {

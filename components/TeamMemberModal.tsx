@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TeamMember } from '../types.ts';
 
 interface TeamMemberModalProps {
@@ -8,6 +8,8 @@ interface TeamMemberModalProps {
 }
 
 const TeamMemberModal: React.FC<TeamMemberModalProps> = ({ member, onClose }) => {
+  const [activeTab, setActiveTab] = useState<'contribution' | 'description'>('contribution');
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = 'auto'; };
@@ -38,26 +40,55 @@ const TeamMemberModal: React.FC<TeamMemberModalProps> = ({ member, onClose }) =>
               className="w-full h-full object-cover grayscale-[20%]"
             />
           </div>
-          <div className="w-full md:w-1/2 p-12 md:p-16 flex flex-col justify-center space-y-10">
-            <div className="space-y-4">
-              <span className="text-[9px] uppercase tracking-[0.4em] font-black text-[#2D4F2D] opacity-60">
-                {member.pod} / {member.role}
-              </span>
-              <h2 className="font-serif text-5xl tracking-tighter leading-none">{member.name}</h2>
-            </div>
-            
-            <div className="space-y-6">
-              <h4 className="text-[10px] uppercase tracking-[0.4em] font-black opacity-30 italic">Lived contribution</h4>
-              <p className="font-serif text-xl text-[#666] leading-relaxed italic">
-                "{member.name} contributes to the mission through their dedicated mahi in {member.pod.toLowerCase()} systems."
-              </p>
-              <div className="pt-8 border-t border-[#F1F1F1]">
-                 <p className="text-[11px] text-[#A5A19D] font-medium italic">Profile details coming soon.</p>
+            <div className="w-full md:w-1/2 p-12 md:p-16 flex flex-col justify-center space-y-10">
+              <div className="space-y-4">
+                <span className="text-[9px] uppercase tracking-[0.4em] font-black text-[#2D4F2D] opacity-60">
+                  {member.pod} / {member.role}
+                </span>
+                <h2 className="font-serif text-5xl tracking-tighter leading-none">{member.name}</h2>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center gap-3 text-[9px] uppercase tracking-[0.35em] font-black opacity-40">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('contribution')}
+                    className={`pb-2 border-b ${activeTab === 'contribution' ? 'border-[#2D4F2D] text-[#2D4F2D]' : 'border-transparent text-[#999]'}`}
+                  >
+                    Contribution
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('description')}
+                    className={`pb-2 border-b ${activeTab === 'description' ? 'border-[#2D4F2D] text-[#2D4F2D]' : 'border-transparent text-[#999]'}`}
+                  >
+                    Description
+                  </button>
+                </div>
+
+                {activeTab === 'contribution' ? (
+                  <div className="space-y-6">
+                    <p className="font-serif text-xl text-[#666] leading-relaxed italic">
+                      "{member.name} contributes to the mission through their dedicated mahi in {member.pod.toLowerCase()} systems."
+                    </p>
+                    <div className="pt-6 border-t border-[#F1F1F1]">
+                      <p className="text-[11px] text-[#A5A19D] font-medium italic">Profile details coming soon.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <p className="text-sm leading-relaxed text-[#555]">
+                      {member.description || 'Description coming soon.'}
+                    </p>
+                    <div className="pt-6 border-t border-[#F1F1F1]">
+                      <p className="text-[11px] text-[#A5A19D] font-medium italic">Shared from the team profile record.</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };
