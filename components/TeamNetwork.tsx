@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { TeamMember } from '../types.ts';
 import { fetchTeamMembers } from '../data.ts';
 import TeamNetworkGraph from './TeamNetworkGraph.tsx';
@@ -9,6 +9,7 @@ const TeamNetwork: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const loadTeam = async () => {
@@ -26,6 +27,23 @@ const TeamNetwork: React.FC = () => {
     loadTeam();
   }, []);
 
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const groupedByArea = useMemo(() => {
+    const groups: Record<string, TeamMember[]> = {};
+    teamMembers.forEach(member => {
+      const area = member.areas?.[0] || member.pod || 'General';
+      if (!groups[area]) groups[area] = [];
+      groups[area].push(member);
+    });
+    return Object.entries(groups).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [teamMembers]);
+
   return (
     <div data-reveal className="relative w-full h-[75vh] min-h-[600px] bg-[#FDFCFB] rounded-[48px] border border-[#E5E1DD] shadow-inner overflow-hidden">
       {loading ? (
@@ -34,10 +52,42 @@ const TeamNetwork: React.FC = () => {
           <span className="text-[10px] uppercase tracking-widest font-bold">Loading Team...</span>
         </div>
       ) : teamMembers.length > 0 ? (
-        <TeamNetworkGraph 
-          members={teamMembers} 
-          onMemberClick={setSelectedMember} 
-        />
+        isMobile ? (
+          <div className="h-full overflow-y-auto px-6 py-8 space-y-10">
+            {groupedByArea.map(([area, members]) => (
+              <section key={area} className="space-y-4">
+                <h3 className="font-serif text-2xl tracking-tight text-[#1A1A1A]">{area}</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {members.map(member => (
+                    <button
+                      key={member.id}
+                      onClick={() => setSelectedMember(member)}
+                      className="flex flex-col items-center gap-3 text-left"
+                    >
+                      <div className="w-24 h-24 rounded-full border border-[#E5E1DD] overflow-hidden bg-white">
+                        <img
+                          src={member.image}
+                          alt={member.name}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="text-[10px] uppercase tracking-[0.25em] font-black text-[#1A1A1A] text-center">
+                        {member.name}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <TeamNetworkGraph 
+            members={teamMembers} 
+            onMemberClick={setSelectedMember} 
+          />
+        )
       ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-[#A5A19D]">
           <span className="text-[10px] uppercase tracking-widest font-bold">No team data yet</span>
@@ -45,7 +95,7 @@ const TeamNetwork: React.FC = () => {
       )}
       
       {/* Interaction hints */}
-      <div className="absolute bottom-10 right-10 p-6 bg-white/80 backdrop-blur-md border border-[#E5E1DD] rounded-3xl max-w-xs shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <div className="absolute bottom-10 right-10 p-6 bg-white/80 backdrop-blur-md border border-[#E5E1DD] rounded-3xl max-w-xs shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-1000 hidden md:block">
          <div className="flex items-center gap-3 mb-3">
            <div className="w-1.5 h-1.5 rounded-full bg-[#2D4F2D] animate-ping" />
            <h4 className="text-[8px] uppercase tracking-[0.3em] font-black opacity-30">Our Hands</h4>

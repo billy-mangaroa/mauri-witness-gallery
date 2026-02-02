@@ -6,6 +6,8 @@ interface Node extends TeamMember {
   x: number;
   y: number;
   area: string;
+  labelX: number;
+  labelY: number;
 }
 
 interface Cluster {
@@ -58,6 +60,7 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
 
       computedClusters.push({ area, cx, cy, radius });
 
+      const clusterNodes: Node[] = [];
       membersInArea.forEach((member, i) => {
         const angle = (Math.PI * 2 * i) / Math.max(membersInArea.length, 1);
         const ring = membersInArea.length > 7 ? Math.floor(i / 7) : 0;
@@ -65,11 +68,27 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
         const jitter = (Math.random() - 0.5) * 18;
         const x = cx + Math.cos(angle) * (ringRadius + jitter);
         const y = cy + Math.sin(angle) * (ringRadius + jitter);
-        computedNodes.push({ ...member, x, y, area });
+        const labelOffset = 70;
+        const labelX = x;
+        const labelY = y + labelOffset;
+        const node = { ...member, x, y, area, labelX, labelY };
+        computedNodes.push(node);
+        clusterNodes.push(node);
       });
+
+      const labelHeight = 22;
+      const labelPadding = 10;
+      const sortedByY = [...clusterNodes].sort((a, b) => a.labelY - b.labelY);
+      for (let i = 1; i < sortedByY.length; i += 1) {
+        const prev = sortedByY[i - 1];
+        const current = sortedByY[i];
+        if (current.labelY - prev.labelY < labelHeight + labelPadding) {
+          current.labelY = prev.labelY + labelHeight + labelPadding;
+        }
+      }
     });
 
-    const minDistance = 110;
+    const minDistance = 120;
     for (let pass = 0; pass < 5; pass += 1) {
       for (let i = 0; i < computedNodes.length; i += 1) {
         for (let j = i + 1; j < computedNodes.length; j += 1) {
@@ -87,6 +106,10 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
             a.y += ny * push;
             b.x -= nx * push;
             b.y -= ny * push;
+            a.labelX += nx * push;
+            a.labelY += ny * push;
+            b.labelX -= nx * push;
+            b.labelY -= ny * push;
           }
         }
       }
@@ -171,10 +194,10 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
 
         {hoveredCluster && (
           <text
-            x={viewBox.x + viewBox.w / 2}
-            y={viewBox.y + 60}
+            x={clusters.find(cluster => cluster.area === hoveredCluster)?.cx}
+            y={(clusters.find(cluster => cluster.area === hoveredCluster)?.cy || 0) + 6}
             textAnchor="middle"
-            className="text-[22px] font-black fill-[#1A1A1A]"
+            className="font-serif text-[24px] font-black fill-[#1A1A1A]"
           >
             {hoveredCluster}
           </text>
@@ -195,8 +218,8 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
                 <image href={node.image} x={node.x - 40} y={node.y - 40} width="80" height="80" clipPath={`url(#clip-${node.id})`} preserveAspectRatio="xMidYMid slice" />
                 
                 <g className={`animate-in fade-in duration-300 ${isHovered ? '' : 'opacity-70'}`}>
-                  <rect x={node.x - 70} y={node.y + 55} width="140" height="22" rx="11" fill="white" fillOpacity="0.95" stroke="#E5E1DD" strokeWidth="0.5" />
-                  <text x={node.x} y={node.y + 70} textAnchor="middle" className="text-[9px] uppercase tracking-[0.22em] font-black fill-[#1A1A1A]">
+                  <rect x={node.labelX - 70} y={node.labelY - 15} width="140" height="22" rx="11" fill="white" fillOpacity="0.95" stroke="#E5E1DD" strokeWidth="0.5" />
+                  <text x={node.labelX} y={node.labelY} textAnchor="middle" className="text-[9px] uppercase tracking-[0.22em] font-black fill-[#1A1A1A]">
                     {node.name}
                   </text>
                 </g>
