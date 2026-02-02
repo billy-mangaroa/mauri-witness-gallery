@@ -23,6 +23,7 @@ const DOMAIN_BACKGROUNDS: Record<DomainType, string> = {
 };
 
 const App: React.FC = () => {
+  const hiddenPage = new URLSearchParams(window.location.search).get('page') === 'how-it-works';
   const [activeDomain, setActiveDomain] = useState<DomainType>('Earth');
   const [records, setRecords] = useState<WitnessRecord[]>([]);
   const [organisations, setOrganisations] = useState<Organisation[]>([]);
@@ -110,6 +111,60 @@ const App: React.FC = () => {
   }, [records, activeDomain]);
 
   const domainNarrative = DOMAIN_NARRATIVES[activeDomain];
+
+  if (hiddenPage) {
+    return (
+      <div className="min-h-screen bg-[#FDFCFB] text-[#1A1A1A] px-6 py-24">
+        <div className="max-w-3xl mx-auto space-y-12">
+          <div className="space-y-4">
+            <span className="text-[10px] uppercase tracking-[0.4em] font-bold opacity-40">Internal Reference</span>
+            <h1 className="font-serif text-5xl tracking-tight">How this site works</h1>
+            <p className="text-base leading-relaxed text-[#555]">
+              This impact gallery is designed as a living evidence archive for Mangaroa Farms. It brings together
+              quantitative measures, community narratives, and operational signals to show how the mahi is evolving
+              across Earth, People, and Network domains.
+            </p>
+          </div>
+
+          <section className="space-y-4">
+            <h2 className="font-serif text-3xl">What it is based on</h2>
+            <p className="text-sm leading-relaxed text-[#666]">
+              The core reference is the internal document <strong>MF Impact Reporting</strong>. It guides the metrics,
+              themes, and storytelling structure. You can access the source PDF here:
+            </p>
+            <a
+              href="/MF%20Impact%20Reporting.pdf"
+              className="inline-flex items-center gap-3 text-sm font-bold text-[#2D4F2D] border-b-2 border-[#2D4F2D]/30 hover:border-[#2D4F2D]"
+            >
+              Open MF Impact Reporting (PDF)
+            </a>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="font-serif text-3xl">What it aims to do</h2>
+            <ul className="text-sm leading-relaxed text-[#666] space-y-2">
+              <li>Translate complex farm and community work into clear, grounded signals.</li>
+              <li>Provide a single place to review evidence, learnings, and stories.</li>
+              <li>Support adaptive decision-making by showing what is changing over time.</li>
+            </ul>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="font-serif text-3xl">How to use it</h2>
+            <p className="text-sm leading-relaxed text-[#666]">
+              Each domain provides a snapshot, deeper evidence layers, and related narratives. The team network and
+              systems views are internal tools for coordination, while the public layers focus on transparency and
+              community trust.
+            </p>
+          </section>
+
+          <a href="/" className="text-[10px] uppercase tracking-[0.4em] font-black text-[#2D4F2D]">
+            Back to site
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FDFCFB] text-[#1A1A1A] selection:bg-[#2D4F2D] selection:text-white">
@@ -380,16 +435,28 @@ const App: React.FC = () => {
 
       {/* Footer Branding */}
       <footer data-reveal className="bg-white border-t border-[#E5E1DD] py-24 px-6">
-        <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-end gap-20">
+        <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-16 items-start">
           <div className="space-y-8">
-            <h3 className="font-serif text-6xl md:text-8xl tracking-tighter text-[#1A1A1A]">Ngā Mihi.</h3>
-            <p className="text-lg font-light text-[#888] max-w-sm font-serif italic leading-relaxed">
-              We measure what we care for. We tell stories so we remember why. Grounded in place alongside the Mangaroa River.
-            </p>
+            <h3 className="font-serif text-6xl md:text-7xl tracking-tighter text-[#1A1A1A]">Mangaroa Farms</h3>
+            <div className="space-y-2 text-sm text-[#666]">
+              <p>Te Awa Kairangi, Upper Hutt, Wellington.</p>
+              <p className="italic">welcome@mangaroa.org</p>
+            </div>
+            <div className="flex items-center gap-4 text-xs uppercase tracking-[0.3em] font-black">
+              <a href="https://www.instagram.com/mangaroafarms" target="_blank" rel="noopener noreferrer" className="hover:text-[#2D4F2D]">Instagram</a>
+              <a href="https://www.facebook.com/mangaroafarms" target="_blank" rel="noopener noreferrer" className="hover:text-[#2D4F2D]">Facebook</a>
+              <a href="https://nz.linkedin.com/company/mangaroafarms" target="_blank" rel="noopener noreferrer" className="hover:text-[#2D4F2D]">LinkedIn</a>
+            </div>
           </div>
-          <div className="text-right space-y-4">
-             <div className="text-[10px] uppercase tracking-[0.3em] font-black text-[#2D4F2D]">Living Impact Registry</div>
-             <p className="text-[10px] uppercase tracking-[0.2em] font-bold opacity-20">© 2024 Mangaroa Farms</p>
+          <div className="space-y-4 text-sm">
+            <div className="text-[10px] uppercase tracking-[0.4em] font-black opacity-40">Quick Links</div>
+            <div className="flex flex-col gap-2">
+              <a href="/visit-us" className="hover:text-[#2D4F2D]">Visit our Farm Shop</a>
+              <a href="/stay" className="hover:text-[#2D4F2D]">Stay at Mangaroa</a>
+              <a href="https://store.mangaroa.org/collections/online-meat-deliveries" target="_blank" rel="noopener noreferrer" className="hover:text-[#2D4F2D]">Order Online</a>
+              <a href="/newsletter" className="hover:text-[#2D4F2D]">Newsletter</a>
+              <a href="/contact" className="hover:text-[#2D4F2D]">Contact</a>
+            </div>
           </div>
         </div>
       </footer>
