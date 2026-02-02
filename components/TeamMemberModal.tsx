@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { TeamMember } from '../types.ts';
 
 interface TeamMemberModalProps {
@@ -8,8 +8,6 @@ interface TeamMemberModalProps {
 }
 
 const TeamMemberModal: React.FC<TeamMemberModalProps> = ({ member, onClose }) => {
-  const [activeTab, setActiveTab] = useState<'contribution' | 'description'>('contribution');
-
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = 'auto'; };
@@ -46,45 +44,32 @@ const TeamMemberModal: React.FC<TeamMemberModalProps> = ({ member, onClose }) =>
                   {member.pod} / {member.role}
                 </span>
                 <h2 className="font-serif text-5xl tracking-tighter leading-none">{member.name}</h2>
+                {member.areas && member.areas.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {member.areas.map(area => (
+                      <span
+                        key={area}
+                        className="text-[9px] uppercase tracking-[0.3em] font-black text-[#1A1A1A] bg-[#F1EFEC] px-3 py-1 rounded-full"
+                      >
+                        {area}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-6">
-                <div className="flex items-center gap-3 text-[9px] uppercase tracking-[0.35em] font-black opacity-40">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('contribution')}
-                    className={`pb-2 border-b ${activeTab === 'contribution' ? 'border-[#2D4F2D] text-[#2D4F2D]' : 'border-transparent text-[#999]'}`}
-                  >
-                    Contribution
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('description')}
-                    className={`pb-2 border-b ${activeTab === 'description' ? 'border-[#2D4F2D] text-[#2D4F2D]' : 'border-transparent text-[#999]'}`}
-                  >
-                    Description
-                  </button>
+                <div className="text-[9px] uppercase tracking-[0.35em] font-black text-[#2D4F2D] border-b border-[#2D4F2D] pb-2 inline-flex">
+                  Description
                 </div>
-
-                {activeTab === 'contribution' ? (
-                  <div className="space-y-6">
-                    <p className="font-serif text-xl text-[#666] leading-relaxed italic">
-                      "{member.name} contributes to the mission through their dedicated mahi in {member.pod.toLowerCase()} systems."
-                    </p>
-                    <div className="pt-6 border-t border-[#F1F1F1]">
-                      <p className="text-[11px] text-[#A5A19D] font-medium italic">Profile details coming soon.</p>
-                    </div>
+                <div className="space-y-6">
+                  <p className="font-serif text-xl text-[#666] leading-relaxed italic">
+                    {member.description || 'Description coming soon.'}
+                  </p>
+                  <div className="pt-6 border-t border-[#F1F1F1]">
+                    <p className="text-[11px] text-[#A5A19D] font-medium italic">Shared from the team profile record.</p>
                   </div>
-                ) : (
-                  <div className="space-y-6">
-                    <p className="text-sm leading-relaxed text-[#555]">
-                      {member.description || 'Description coming soon.'}
-                    </p>
-                    <div className="pt-6 border-t border-[#F1F1F1]">
-                      <p className="text-[11px] text-[#A5A19D] font-medium italic">Shared from the team profile record.</p>
-                    </div>
-                  </div>
-                )}
+                </div>
               </div>
             </div>
           </div>

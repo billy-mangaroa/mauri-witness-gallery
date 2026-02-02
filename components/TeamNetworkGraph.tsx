@@ -39,8 +39,8 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
     const totalClusters = Math.max(areas.length, 1);
     const columns = Math.ceil(Math.sqrt(totalClusters));
     const rows = Math.ceil(totalClusters / columns);
-    const spacingX = 420;
-    const spacingY = 360;
+    const spacingX = 520;
+    const spacingY = 440;
     const startX = -((columns - 1) * spacingX) / 2;
     const startY = -((rows - 1) * spacingY) / 2;
 
@@ -53,16 +53,17 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
       const cx = startX + col * spacingX;
       const cy = startY + row * spacingY;
       const membersInArea = grouped[area];
-      const radius = Math.max(120, Math.min(180, membersInArea.length * 18));
+      const radius = Math.max(150, Math.min(220, membersInArea.length * 20));
 
       computedClusters.push({ area, cx, cy, radius });
 
       membersInArea.forEach((member, i) => {
         const angle = (Math.PI * 2 * i) / Math.max(membersInArea.length, 1);
-        const ring = membersInArea.length > 8 ? 1 : 0;
-        const ringRadius = radius + ring * 60;
-        const x = cx + Math.cos(angle) * ringRadius;
-        const y = cy + Math.sin(angle) * ringRadius;
+        const ring = membersInArea.length > 7 ? Math.floor(i / 7) : 0;
+        const ringRadius = radius - 40 + ring * 55;
+        const jitter = (Math.random() - 0.5) * 18;
+        const x = cx + Math.cos(angle) * (ringRadius + jitter);
+        const y = cy + Math.sin(angle) * (ringRadius + jitter);
         computedNodes.push({ ...member, x, y, area });
       });
     });
@@ -126,8 +127,8 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
             const color = CLUSTER_COLORS[index % CLUSTER_COLORS.length];
             return (
               <g key={cluster.area}>
-                <circle cx={cluster.cx} cy={cluster.cy} r={cluster.radius + 60} fill={color} fillOpacity="0.04" stroke={color} strokeOpacity="0.16" />
-                <text x={cluster.cx} y={cluster.cy - cluster.radius - 70} textAnchor="middle" className="text-[11px] uppercase tracking-[0.4em] font-black opacity-30 fill-[#1A1A1A]">
+                <circle cx={cluster.cx} cy={cluster.cy} r={cluster.radius + 90} fill={color} fillOpacity="0.05" stroke={color} strokeOpacity="0.2" />
+                <text x={cluster.cx} y={cluster.cy - cluster.radius - 90} textAnchor="middle" className="text-[13px] uppercase tracking-[0.45em] font-black opacity-45 fill-[#1A1A1A]">
                   {cluster.area}
                 </text>
               </g>
@@ -146,12 +147,12 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
                 onMouseLeave={() => setHoveredNodeId(null)}
                 onClick={() => onMemberClick(node)}
               >
-                <circle cx={node.x} cy={node.y} r="38" fill="white" stroke={isHovered ? "#2D4F2D" : "#E5E1DD"} strokeWidth={isHovered ? "2" : "1"} filter="url(#teamShadow)" />
-                <image href={node.image} x={node.x - 35} y={node.y - 35} width="70" height="70" clipPath={`url(#clip-${node.id})`} preserveAspectRatio="xMidYMid slice" />
+                <circle cx={node.x} cy={node.y} r="44" fill="white" stroke={isHovered ? "#2D4F2D" : "#E5E1DD"} strokeWidth={isHovered ? "2" : "1"} filter="url(#teamShadow)" />
+                <image href={node.image} x={node.x - 40} y={node.y - 40} width="80" height="80" clipPath={`url(#clip-${node.id})`} preserveAspectRatio="xMidYMid slice" />
                 
                 <g className={`animate-in fade-in duration-300 ${isHovered ? '' : 'opacity-70'}`}>
-                  <rect x={node.x - 60} y={node.y + 45} width="120" height="20" rx="10" fill="white" fillOpacity="0.95" stroke="#E5E1DD" strokeWidth="0.5" />
-                  <text x={node.x} y={node.y + 58} textAnchor="middle" className="text-[8px] uppercase tracking-[0.2em] font-black fill-[#1A1A1A]">
+                  <rect x={node.x - 70} y={node.y + 55} width="140" height="22" rx="11" fill="white" fillOpacity="0.95" stroke="#E5E1DD" strokeWidth="0.5" />
+                  <text x={node.x} y={node.y + 70} textAnchor="middle" className="text-[9px] uppercase tracking-[0.22em] font-black fill-[#1A1A1A]">
                     {node.name}
                   </text>
                 </g>
