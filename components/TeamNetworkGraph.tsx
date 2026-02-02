@@ -25,6 +25,7 @@ const CLUSTER_COLORS = ['#2D4F2D', '#D4A373', '#4A4E69', '#8E9AAF', '#A5A19D', '
 const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberClick }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+  const [hoveredCluster, setHoveredCluster] = useState<string | null>(null);
   const [viewBox, setViewBox] = useState({ x: -450, y: -350, w: 900, h: 700 });
 
   const { nodes, clusters } = useMemo(() => {
@@ -67,6 +68,29 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
         computedNodes.push({ ...member, x, y, area });
       });
     });
+
+    const minDistance = 110;
+    for (let pass = 0; pass < 5; pass += 1) {
+      for (let i = 0; i < computedNodes.length; i += 1) {
+        for (let j = i + 1; j < computedNodes.length; j += 1) {
+          const a = computedNodes[i];
+          const b = computedNodes[j];
+          if (a.area !== b.area) continue;
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+          if (distance < minDistance) {
+            const push = (minDistance - distance) * 0.5;
+            const nx = dx / distance;
+            const ny = dy / distance;
+            a.x += nx * push;
+            a.y += ny * push;
+            b.x -= nx * push;
+            b.y -= ny * push;
+          }
+        }
+      }
+    }
 
     return { nodes: computedNodes, clusters: computedClusters };
   }, [members]);
@@ -122,19 +146,39 @@ const TeamNetworkGraph: React.FC<TeamNetworkGraphProps> = ({ members, onMemberCl
           ))}
         </defs>
 
-        <g id="cluster-backgrounds" opacity="0.35">
+        <g id="cluster-backgrounds" opacity="0.6">
           {clusters.map((cluster, index) => {
             const color = CLUSTER_COLORS[index % CLUSTER_COLORS.length];
             return (
               <g key={cluster.area}>
-                <circle cx={cluster.cx} cy={cluster.cy} r={cluster.radius + 90} fill={color} fillOpacity="0.05" stroke={color} strokeOpacity="0.2" />
-                <text x={cluster.cx} y={cluster.cy - cluster.radius - 90} textAnchor="middle" className="text-[13px] uppercase tracking-[0.45em] font-black opacity-45 fill-[#1A1A1A]">
-                  {cluster.area}
-                </text>
+                <circle
+                  cx={cluster.cx}
+                  cy={cluster.cy}
+                  r={cluster.radius + 110}
+                  fill={color}
+                  fillOpacity="0.03"
+                  stroke={color}
+                  strokeOpacity="0.6"
+                  strokeWidth="2"
+                  strokeDasharray="8 8"
+                  onMouseEnter={() => setHoveredCluster(cluster.area)}
+                  onMouseLeave={() => setHoveredCluster(null)}
+                />
               </g>
             );
           })}
         </g>
+
+        {hoveredCluster && (
+          <text
+            x={viewBox.x + viewBox.w / 2}
+            y={viewBox.y + 60}
+            textAnchor="middle"
+            className="text-[22px] font-black fill-[#1A1A1A]"
+          >
+            {hoveredCluster}
+          </text>
+        )}
 
         <g id="team-nodes">
           {nodes.map(node => {

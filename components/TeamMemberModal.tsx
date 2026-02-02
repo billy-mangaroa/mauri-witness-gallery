@@ -66,9 +66,7 @@ const TeamMemberModal: React.FC<TeamMemberModalProps> = ({ member, onClose }) =>
                   <p className="font-serif text-xl text-[#666] leading-relaxed italic">
                     {member.description || 'Description coming soon.'}
                   </p>
-                  <div className="pt-6 border-t border-[#F1F1F1]">
-                    <p className="text-[11px] text-[#A5A19D] font-medium italic">Shared from the team profile record.</p>
-                  </div>
+                  <div className="pt-6 border-t border-[#F1F1F1]" />
                 </div>
               </div>
             </div>
