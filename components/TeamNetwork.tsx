@@ -52,7 +52,6 @@ const TeamNetwork: React.FC = () => {
          </div>
          <p className="text-[10px] text-[#666] leading-relaxed italic">
            The network of people behind Mangaroa. <br />
-           Scroll to zoom inside this area. <br />
            Click a profile to learn more.
          </p>
       </div>
