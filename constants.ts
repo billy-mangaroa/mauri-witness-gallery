@@ -43,7 +43,7 @@ export const DOMAIN_NARRATIVES: Record<DomainType, DomainNarrative> = {
     subheading: "A place of learning, nourishment, and belonging",
     intro: [
       "Mangaroa functions as a living classroom. Every volunteer, student, and visitor contributes to a social ecosystem where connection to land and food creates deeper community resilience.",
-      "Our focus is not just how many people come, but how deeply they connect, learn, and carry this experience back into their own lives."
+      "Our focus is not just how many people come, but how deeply participants connect, learn, and carry this experience back into their own lives."
     ]
   },
   Systems: {
@@ -77,10 +77,10 @@ export const DOMAIN_METRICS: Record<DomainType, Metric[]> = {
     { id: 'e4', domain: 'Earth', label: 'Active Traps', description: 'Monitoring network across valley', result: '420+', trend: 'up' }
   ],
   People: [
-    { id: 'p1', domain: 'People', label: 'Mahi Exchangers', description: 'From 12 countries since 2024', result: '31', trend: 'up' },
-    { id: 'p2', domain: 'People', label: 'Days Contributed', description: 'Total exchanger days on-farm', result: '1,118', trend: 'up' },
-    { id: 'p3', domain: 'People', label: 'Work Hours', description: 'Hours across all programmes', result: '3,500+', trend: 'up' },
-    { id: 'p4', domain: 'People', label: 'Average Stay', description: 'Days per exchanger', result: '36', trend: 'up' }
+    { id: 'p1', domain: 'People', label: 'Participants', description: 'From 12 countries since 2024', result: '31', trend: 'up' },
+    { id: 'p2', domain: 'People', label: 'Days Contributed', description: 'Total participant days on-farm', result: '1,118', trend: 'up' },
+    { id: 'p3', domain: 'People', label: 'Contribution Hours', description: 'Hours across community programmes', result: '3,500+', trend: 'up' },
+    { id: 'p4', domain: 'People', label: 'Average Stay', description: 'Days per participant', result: '36', trend: 'up' }
   ],
   Systems: [
     { id: 's1', domain: 'Systems', label: 'Regen Revenue', description: 'Income from regenerative activities', result: '47%', trend: 'up' },

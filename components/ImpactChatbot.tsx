@@ -78,7 +78,7 @@ const ImpactChatbot: React.FC<ImpactChatbotProps> = ({ activeDomain }) => {
     if (activeDomain === 'People') {
       return [
         'Summarise the People snapshot',
-        'What is the Mahi Exchange programme?',
+        'What is the community contribution programme?',
         'Show recent events highlights'
       ];
     }

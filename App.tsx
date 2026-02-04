@@ -200,6 +200,14 @@ const App: React.FC = () => {
                 {domain}
               </button>
             ))}
+            <a
+              href="https://mangaroa.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-block text-[10px] uppercase tracking-[0.3em] font-bold text-[#A5A19D] hover:text-[#1A1A1A] transition-all border-b-2 border-transparent py-2 ml-2"
+            >
+              mangaroa.org &rarr;
+            </a>
           </div>
         </div>
       </nav>
@@ -318,6 +326,30 @@ const App: React.FC = () => {
         {/* Earth Data Explorer */}
         {activeDomain === 'Earth' && (
           <div className="space-y-32">
+            <section data-reveal className="space-y-10">
+              <div className="max-w-3xl space-y-6">
+                <div className="space-y-3">
+                  <h2 className="font-serif text-5xl tracking-tight leading-tight">State of the Valley</h2>
+                  <p className="text-[11px] uppercase tracking-[0.4em] font-bold opacity-40">
+                    Where we are, and where we are heading
+                  </p>
+                </div>
+                <p className="font-serif text-2xl text-[#555] leading-relaxed italic">
+                  "We are rebuilding ecological health from a place of depletion toward a living, resilient valley."
+                </p>
+                <div className="space-y-4 text-sm leading-relaxed text-[#666]">
+                  <p>
+                    Today, our bush and waterways show signs of recovery on the surface, while the understory and
+                    biodiversity still need time and care to return. This page sets the baseline: the present state of
+                    the land and the path we are taking to restore it.
+                  </p>
+                  <p>
+                    As you move through the evidence below, each signal — pest pressure, plantings, and restoration
+                    activity — helps us track progress toward a healthier future.
+                  </p>
+                </div>
+              </div>
+            </section>
             <PredatorFree />
             
             {/* Hyperboard Section */}
@@ -434,28 +466,32 @@ const App: React.FC = () => {
       <ImpactChatbot activeDomain={activeDomain} />
 
       {/* Footer Branding */}
-      <footer data-reveal className="bg-white border-t border-[#E5E1DD] py-24 px-6">
+      <footer data-reveal className="bg-[#2D4F2D] py-24 px-6">
         <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-16 items-start">
           <div className="space-y-8">
-            <h3 className="font-serif text-6xl md:text-7xl tracking-tighter text-[#1A1A1A]">Mangaroa Farms</h3>
-            <div className="space-y-2 text-sm text-[#666]">
+            <img
+              src="https://cdn.shopify.com/s/files/1/0674/5469/7761/files/Mangaroa-White_High_Res_Logo.png?v=1685490985"
+              alt="Mangaroa Farms"
+              className="h-16 w-auto object-contain"
+            />
+            <div className="space-y-2 text-sm text-white/70">
               <p>Te Awa Kairangi, Upper Hutt, Wellington.</p>
               <p className="italic">welcome@mangaroa.org</p>
             </div>
-            <div className="flex items-center gap-4 text-xs uppercase tracking-[0.3em] font-black">
-              <a href="https://www.instagram.com/mangaroafarms" target="_blank" rel="noopener noreferrer" className="hover:text-[#2D4F2D]">Instagram</a>
-              <a href="https://www.facebook.com/mangaroafarms" target="_blank" rel="noopener noreferrer" className="hover:text-[#2D4F2D]">Facebook</a>
-              <a href="https://nz.linkedin.com/company/mangaroafarms" target="_blank" rel="noopener noreferrer" className="hover:text-[#2D4F2D]">LinkedIn</a>
+            <div className="flex items-center gap-4 text-xs uppercase tracking-[0.3em] font-black text-white/60">
+              <a href="https://www.instagram.com/mangaroafarms" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
+              <a href="https://www.facebook.com/mangaroafarms" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Facebook</a>
+              <a href="https://nz.linkedin.com/company/mangaroafarms" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">LinkedIn</a>
             </div>
           </div>
           <div className="space-y-4 text-sm">
-            <div className="text-[10px] uppercase tracking-[0.4em] font-black opacity-40">Quick Links</div>
-            <div className="flex flex-col gap-2">
-              <a href="/visit-us" className="hover:text-[#2D4F2D]">Visit our Farm Shop</a>
-              <a href="/stay" className="hover:text-[#2D4F2D]">Stay at Mangaroa</a>
-              <a href="https://store.mangaroa.org/collections/online-meat-deliveries" target="_blank" rel="noopener noreferrer" className="hover:text-[#2D4F2D]">Order Online</a>
-              <a href="/newsletter" className="hover:text-[#2D4F2D]">Newsletter</a>
-              <a href="/contact" className="hover:text-[#2D4F2D]">Contact</a>
+            <div className="text-[10px] uppercase tracking-[0.4em] font-black text-white/40">Quick Links</div>
+            <div className="flex flex-col gap-2 text-white/70">
+              <a href="https://mangaroa.org" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">mangaroa.org</a>
+              <a href="https://mangaroa.org/visit-us" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Visit our Farm Shop</a>
+              <a href="https://mangaroa.org/stay" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Stay at Mangaroa</a>
+              <a href="https://store.mangaroa.org/collections/online-meat-deliveries" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Order Online</a>
+              <a href="https://mangaroa.org/contact" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Contact</a>
             </div>
           </div>
         </div>
