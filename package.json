@@ -10,11 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tmcw/togeojson": "^7.1.2",
+    "mapbox-gl": "^3.18.1",
     "playwright": "^1.58.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.16",
     "@types/node": "^25.1.0",
     "@vitejs/plugin-react": "^4.3.0",
     "typescript": "^5.5.0",

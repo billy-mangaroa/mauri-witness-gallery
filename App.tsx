@@ -13,6 +13,7 @@ import MahiExchange from './components/MahiExchange.tsx';
 import EventsDashboard from './components/EventsDashboard.tsx';
 import ImpactChatbot from './components/ImpactChatbot.tsx';
 import SystemsFlow from './components/SystemsFlow.tsx';
+import ImpactMap from './components/ImpactMap.tsx';
 
 const DOMAIN_BACKGROUNDS: Record<DomainType, string> = {
   Earth: 'https://cdn.shopify.com/s/files/1/0674/5469/7761/files/Tree_Planting.jpg?v=1754355799',
@@ -326,6 +327,21 @@ const App: React.FC = () => {
         {/* Earth Data Explorer */}
         {activeDomain === 'Earth' && (
           <div className="space-y-32">
+            <section data-reveal className="space-y-10">
+              <div className="max-w-3xl space-y-6">
+                <div className="space-y-3">
+                  <h2 className="font-serif text-5xl tracking-tight leading-tight">Mangaroa Map</h2>
+                  <p className="text-[11px] uppercase tracking-[0.4em] font-bold opacity-40">
+                    Points of care, gathering, and restoration
+                  </p>
+                </div>
+                <p className="text-sm leading-relaxed text-[#666]">
+                  Explore the whenua through key places of connection. Tap a point to open stories and on-the-ground
+                  context for the work unfolding across the valley.
+                </p>
+              </div>
+              <ImpactMap />
+            </section>
             <section data-reveal className="space-y-10">
               <div className="max-w-3xl space-y-6">
                 <div className="space-y-3">

@@ -1,3 +1,5 @@
+> **Read PREFERENCES.md in workspace root (`/Users/billylewis/workspace/PREFERENCES.md`) before starting work.**
+
 # Mangaroa Impact Reporting Development Guide
 
 **For onboarding**: Read `GO.md` first for complete project context.
