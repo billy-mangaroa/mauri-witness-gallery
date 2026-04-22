@@ -6,6 +6,17 @@ Complete history of features, fixes, and improvements. For current status see AC
 
 ---
 
+## 2026-04-22 - People Metrics Reconciliation
+
+**Content** - Align `constants.ts` People stats with `MAHI_DATA` in `components/MahiExchange.tsx`
+- Days Contributed: `1,118` → `1,152` (sum of 31 `totalDays` values)
+- Average Stay: `36` → `37` (round(1152/31))
+- Country count: `From 12 countries` → `From 11 countries` (11 unique nationalities in MAHI_DATA)
+- Stale-status flag: 5 records (Emily, Christophe, Tom NZ, Tijana, Vanessa) carry `'current'`/`'upcoming'` with departureDates prior to 2026-04-22 — needs fresh roster from Billy
+- Files: `constants.ts`
+
+---
+
 ## 2026-02-05 - Visual Design Alignment
 
 **Design** - Match impact site footer, nav, and typography to mangaroa.org

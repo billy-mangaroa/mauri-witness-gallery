@@ -77,10 +77,10 @@ export const DOMAIN_METRICS: Record<DomainType, Metric[]> = {
     { id: 'e4', domain: 'Earth', label: 'Active Traps', description: 'Monitoring network across valley', result: '420+', trend: 'up' }
   ],
   People: [
-    { id: 'p1', domain: 'People', label: 'Participants', description: 'From 12 countries since 2024', result: '31', trend: 'up' },
-    { id: 'p2', domain: 'People', label: 'Days Contributed', description: 'Total participant days on-farm', result: '1,118', trend: 'up' },
+    { id: 'p1', domain: 'People', label: 'Participants', description: 'From 11 countries since 2024', result: '31', trend: 'up' },
+    { id: 'p2', domain: 'People', label: 'Days Contributed', description: 'Total participant days on-farm', result: '1,152', trend: 'up' },
     { id: 'p3', domain: 'People', label: 'Contribution Hours', description: 'Hours across community programmes', result: '3,500+', trend: 'up' },
-    { id: 'p4', domain: 'People', label: 'Average Stay', description: 'Days per participant', result: '36', trend: 'up' }
+    { id: 'p4', domain: 'People', label: 'Average Stay', description: 'Days per participant', result: '37', trend: 'up' }
   ],
   Systems: [
     { id: 's1', domain: 'Systems', label: 'Regen Revenue', description: 'Income from regenerative activities', result: '47%', trend: 'up' },
